@@ -1,0 +1,141 @@
+const { ChatSession, ChatMessage } = require('../models');
+
+// Guest Endpoints
+exports.startSession = async (req, res) => {
+  try {
+    const { visitorName, email, phone } = req.body;
+    const session = await ChatSession.create({
+      visitorName: visitorName || 'Visitor',
+      email,
+      phone,
+      status: 'active',
+      lastMessageAt: new Date()
+    });
+    res.status(201).json(session);
+  } catch (error) {
+    console.error('Start session error:', error);
+    res.status(500).json({ message: 'Failed to start chat session', error: error.message });
+  }
+};
+
+exports.sendGuestMessage = async (req, res) => {
+  try {
+    const { chatSessionId, message } = req.body;
+    if (!chatSessionId || !message) {
+      return res.status(400).json({ message: 'Session ID and message content are required' });
+    }
+
+    const session = await ChatSession.findByPk(chatSessionId);
+    if (!session) {
+      return res.status(404).json({ message: 'Chat session not found' });
+    }
+
+    const chatMsg = await ChatMessage.create({
+      chatSessionId,
+      sender: 'guest',
+      message,
+      isRead: false
+    });
+
+    session.lastMessageAt = new Date();
+    await session.save();
+
+    res.status(201).json(chatMsg);
+  } catch (error) {
+    console.error('Send guest message error:', error);
+    res.status(500).json({ message: 'Failed to send message' });
+  }
+};
+
+exports.getGuestMessages = async (req, res) => {
+  try {
+    const { chatSessionId } = req.params;
+    const messages = await ChatMessage.findAll({
+      where: { chatSessionId },
+      order: [['createdAt', 'ASC']]
+    });
+    res.json(messages);
+  } catch (error) {
+    console.error('Get guest messages error:', error);
+    res.status(500).json({ message: 'Failed to retrieve messages' });
+  }
+};
+
+// Admin Endpoints
+exports.getActiveSessions = async (req, res) => {
+  try {
+    const sessions = await ChatSession.findAll({
+      order: [['lastMessageAt', 'DESC']]
+    });
+    res.json(sessions);
+  } catch (error) {
+    console.error('Get active sessions error:', error);
+    res.status(500).json({ message: 'Failed to retrieve sessions' });
+  }
+};
+
+exports.getSessionMessages = async (req, res) => {
+  try {
+    const { chatSessionId } = req.params;
+    
+    // Mark all guest messages as read when the admin views the session
+    await ChatMessage.update(
+      { isRead: true },
+      { where: { chatSessionId, sender: 'guest', isRead: false } }
+    );
+
+    const messages = await ChatMessage.findAll({
+      where: { chatSessionId },
+      order: [['createdAt', 'ASC']]
+    });
+    res.json(messages);
+  } catch (error) {
+    console.error('Get session messages error:', error);
+    res.status(500).json({ message: 'Failed to retrieve session messages' });
+  }
+};
+
+exports.sendTrainerReply = async (req, res) => {
+  try {
+    const { chatSessionId, message } = req.body;
+    if (!chatSessionId || !message) {
+      return res.status(400).json({ message: 'Session ID and message content are required' });
+    }
+
+    const session = await ChatSession.findByPk(chatSessionId);
+    if (!session) {
+      return res.status(404).json({ message: 'Chat session not found' });
+    }
+
+    const chatMsg = await ChatMessage.create({
+      chatSessionId,
+      sender: 'trainer',
+      message,
+      isRead: true
+    });
+
+    session.lastMessageAt = new Date();
+    await session.save();
+
+    res.status(201).json(chatMsg);
+  } catch (error) {
+    console.error('Send trainer reply error:', error);
+    res.status(500).json({ message: 'Failed to send reply' });
+  }
+};
+
+exports.closeSession = async (req, res) => {
+  try {
+    const { chatSessionId } = req.params;
+    const session = await ChatSession.findByPk(chatSessionId);
+    if (!session) {
+      return res.status(404).json({ message: 'Chat session not found' });
+    }
+    session.status = 'closed';
+    await session.save();
+    res.json({ message: 'Session closed successfully', session });
+  } catch (error) {
+    console.error('Close session error:', error);
+    res.status(500).json({ message: 'Failed to close session' });
+  }
+};
