@@ -16,6 +16,13 @@ const sequelize = new Sequelize(
       idle: 10000
     },
     timezone: '+00:00',
+    dialectOptions: {
+      charset: 'utf8mb4'
+    },
+    define: {
+      charset: 'utf8mb4',
+      collate: 'utf8mb4_unicode_ci'
+    }
   }
 );
 

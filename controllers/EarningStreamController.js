@@ -31,7 +31,15 @@ exports.getAllEarningStreams = async (req, res) => {
 exports.createEarningStream = async (req, res) => {
   try {
     const { slug, title, shortDescription, longDescription, icon, order, active } = req.body;
-    const stream = await EarningStream.create({ slug, title, shortDescription, longDescription, icon, order, active });
+    const stream = await EarningStream.create({
+      slug,
+      title,
+      shortDescription,
+      longDescription,
+      icon: icon || '💰',
+      order,
+      active
+    });
     res.status(201).json(stream);
   } catch (err) {
     console.error('createEarningStream error:', err);

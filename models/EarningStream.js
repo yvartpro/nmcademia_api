@@ -18,9 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     icon: {
-      type: DataTypes.STRING,
-      allowNull: true,
-      defaultValue: '💰'
+      // No DB default: MySQL rejects emoji in DEFAULT on latin1 / strict hosts.
+      // Use seed data or app fallback (PresentationPage: stream.icon || '💰').
+      type: DataTypes.STRING(32),
+      allowNull: true
     },
     order: {
       type: DataTypes.INTEGER,
