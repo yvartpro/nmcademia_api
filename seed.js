@@ -117,6 +117,11 @@ async function seed() {
         description: 'WHAT IS YOUR DREAM? section intro text'
       },
       {
+        key: 'cashflow_quadrant_explanation',
+        value: 'The Cashflow Quadrant by Robert Kiyosaki explains that people earn money from four different quadrants. Most people spend their lives in E (Employee) and S (Self-Employed), exchanging time for active income. True financial freedom is usually built in B (Business Owner) and I (Investor), where systems, leverage, and assets create long-term income.\n\nNetwork marketing gives ordinary people an accessible path into the B quadrant — building a network and a system without millions in startup capital. Passive income is money that continues after your personal effort stops, such as team product reorders and organizational growth.',
+        description: 'Cashflow quadrant section intro on presentation slide'
+      },
+      {
         key: 'binary_system_explanation',
         value: 'In AIM Global, the business is built on what is called a binary system. "Binary" simply means two sides only — your left team and your right team.\n\nWhen you joined the business, you were placed at the top of your own binary structure. From there, you personally introduce two people — one on your LEFT and one on your RIGHT. This creates a tree-like structure where growth is always happening in two directions only.\n\nEvery new member repeats the same process. This is how a binary genealogy grows: every person only needs two positions and the structure keeps expanding through duplication. Over time, a small beginning can grow into a very large organization.',
         description: 'Binary system explanation text for MSB section'

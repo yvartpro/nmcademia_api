@@ -48,7 +48,9 @@ router.put('/faqs/:id', FAQController.updateFAQ);
 router.delete('/faqs/:id', FAQController.deleteFAQ);
 
 // Settings
+router.get('/settings', SettingController.getAllSettingsDetailed);
 router.put('/settings', SettingController.updateSettings);
+router.delete('/settings/:key', SettingController.deleteSetting);
 
 // Testimonials
 router.post('/testimonials', TestimonialController.createTestimonial);
@@ -66,6 +68,7 @@ router.put('/manufacturing-partners/:id', ManufacturingPartnerController.updateM
 router.delete('/manufacturing-partners/:id', ManufacturingPartnerController.deleteManufacturingPartner);
 
 // Earning Streams
+router.get('/earning-streams', EarningStreamController.getAllEarningStreamsAdmin);
 router.post('/earning-streams', EarningStreamController.createEarningStream);
 router.put('/earning-streams/:id', EarningStreamController.updateEarningStream);
 router.delete('/earning-streams/:id', EarningStreamController.deleteEarningStream);

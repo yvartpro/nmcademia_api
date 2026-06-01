@@ -1,5 +1,18 @@
 const { EarningStream } = require('../models');
 
+// GET /admin/earning-streams (all, including inactive)
+exports.getAllEarningStreamsAdmin = async (req, res) => {
+  try {
+    const streams = await EarningStream.findAll({
+      order: [['order', 'ASC']]
+    });
+    res.json(streams);
+  } catch (err) {
+    console.error('getAllEarningStreamsAdmin error:', err);
+    res.status(500).json({ message: 'Failed to fetch earning streams' });
+  }
+};
+
 // GET /earning-streams (public)
 exports.getAllEarningStreams = async (req, res) => {
   try {

@@ -19,6 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     featured: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    mediaAssetId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     }
   }, {
     tableName: 'nma_products',

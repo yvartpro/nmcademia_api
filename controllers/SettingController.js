@@ -15,6 +15,39 @@ exports.getAllSettings = async (req, res) => {
   }
 };
 
+/** Admin: full list with descriptions for the CMS editor */
+exports.getAllSettingsDetailed = async (req, res) => {
+  try {
+    const settings = await Setting.findAll({
+      order: [['key', 'ASC']]
+    });
+    res.json(settings.map(s => ({
+      id: s.id,
+      key: s.key,
+      value: s.value,
+      description: s.description
+    })));
+  } catch (error) {
+    console.error('Get detailed settings error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+exports.deleteSetting = async (req, res) => {
+  try {
+    const { key } = req.params;
+    const setting = await Setting.findOne({ where: { key } });
+    if (!setting) {
+      return res.status(404).json({ message: 'Setting not found' });
+    }
+    await setting.destroy();
+    res.json({ message: 'Setting deleted successfully' });
+  } catch (error) {
+    console.error('Delete setting error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
 exports.updateSettings = async (req, res) => {
   try {
     const settingsMap = req.body; // e.g. { "whatsapp_link": "...", "video_url": "..." }
