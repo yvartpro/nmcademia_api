@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { requireAuth } = require('../middleware/auth');
-const { upload, optimizeImage, optimizeVideo } = require('../middleware/upload');
+const { uploadImage, uploadVideo, optimizeImage, optimizeVideo } = require('../middleware/upload');
 
 const LeadController = require('../controllers/LeadController');
 const CountryController = require('../controllers/CountryController');
@@ -81,8 +81,8 @@ router.post('/chat/sessions/:chatSessionId/close', ChatController.closeSession);
 
 // Media
 router.get('/media', MediaController.getAllMedia);
-router.post('/media/image', upload.single('file'), optimizeImage, MediaController.uploadImage);
-router.post('/media/video', upload.single('file'), optimizeVideo, MediaController.uploadVideo);
+router.post('/media/image', uploadImage.single('file'), optimizeImage, MediaController.uploadImage);
+router.post('/media/video', uploadVideo.single('file'), optimizeVideo, MediaController.uploadVideo);
 router.delete('/media/:id', MediaController.deleteMedia);
 
 module.exports = router;

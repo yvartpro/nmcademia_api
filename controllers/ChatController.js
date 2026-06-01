@@ -4,9 +4,29 @@ const { ChatSession, ChatMessage } = require('../models');
 exports.startSession = async (req, res) => {
   try {
     const { visitorName, email, phone } = req.body;
+
+    // Returning visitor: reuse their active session instead of creating another
+    if (email && String(email).trim()) {
+      const existing = await ChatSession.findOne({
+        where: { email: String(email).trim(), status: 'active' },
+        order: [['lastMessageAt', 'DESC']]
+      });
+      if (existing) {
+        if (visitorName && existing.visitorName !== visitorName) {
+          existing.visitorName = visitorName;
+        }
+        if (phone && existing.phone !== phone) {
+          existing.phone = phone;
+        }
+        existing.lastMessageAt = new Date();
+        await existing.save();
+        return res.status(200).json(existing);
+      }
+    }
+
     const session = await ChatSession.create({
       visitorName: visitorName || 'Visitor',
-      email,
+      email: email ? String(email).trim() : null,
       phone,
       status: 'active',
       lastMessageAt: new Date()

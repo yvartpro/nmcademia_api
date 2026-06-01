@@ -1,21 +1,15 @@
 const { Product, MediaAsset } = require('../models');
-
-const applyBasePath = (value, basePath) => {
-  if (!value) return value;
-  if (value.startsWith('http://') || value.startsWith('https://')) return value;
-  const normalizedBase = basePath.startsWith('/') ? basePath : `/${basePath}`;
-  const normalizedValue = value.startsWith('/') ? value : `/${value}`;
-  if (normalizedValue.startsWith(normalizedBase + '/')) return normalizedValue;
-  return normalizedBase + normalizedValue;
-};
+const { toWebPath } = require('../utils/paths');
 
 const withMediaPaths = (prod) => {
   if (!prod) return prod;
   const basePath = process.env.PUBLIC_BASE_PATH || '';
   const data = prod.toJSON ? prod.toJSON() : { ...prod };
   if (data.image) {
-    data.image.filePath = applyBasePath(data.image.filePath, basePath);
-    data.image.thumbnailPath = applyBasePath(data.image.thumbnailPath, basePath);
+    data.image.filePath = toWebPath(data.image.filePath, basePath);
+    data.image.thumbnailPath = data.image.thumbnailPath
+      ? toWebPath(data.image.thumbnailPath, basePath)
+      : null;
   }
   return data;
 };
