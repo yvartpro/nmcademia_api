@@ -125,6 +125,11 @@ async function seed() {
         description: 'Cashflow quadrant section intro on presentation slide'
       },
       {
+        key: 'cashflow_quadrant_image',
+        value: '',
+        description: 'Cashflow quadrant image URL or media path'
+      },
+      {
         key: 'binary_system_explanation',
         value: settingsContent.binary_system_explanation,
         description: 'Binary system explanation text for MSB section'
