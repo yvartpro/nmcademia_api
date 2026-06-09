@@ -130,6 +130,11 @@ async function seed() {
         description: 'Cashflow quadrant image URL or media path'
       },
       {
+        key: 'binary_tree_image',
+        value: '',
+        description: 'Binary tree diagram image URL or media path'
+      },
+      {
         key: 'binary_system_explanation',
         value: settingsContent.binary_system_explanation,
         description: 'Binary system explanation text for MSB section'
@@ -244,7 +249,7 @@ async function seed() {
           { countryCode: 'NG', price: 259000, currency: 'NGN', referralBonus: 50000, matchBonus: 7000 },
           { countryCode: 'KE', price: 26000, currency: 'KES', referralBonus: 5000, matchBonus: 700 },
           { countryCode: 'BI', price: 520000, currency: 'BIF', referralBonus: 100000, matchBonus: 14000 },
-          { countryCode: 'US', price: 200, currency: 'USD', referralBonus: 40, chBonus: 5 }
+          { countryCode: 'US', price: 200, currency: 'USD', referralBonus: 40, matchBonus: 5 }
         ]
       },
       {
