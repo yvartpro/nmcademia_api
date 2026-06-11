@@ -17,9 +17,9 @@ const toWebPath = (value, basePath = '') => {
   return collapseSlashes(`${normalizedBase}${path}`);
 };
 
-const toPublicUrl = (filePath, basePath = process.env.PUBLIC_BASE_PATH || '') => {
+const toPublicUrl = (filePath, basePath = process.env.PUBLIC_BASE_PATH || '', originOverride) => {
   if (!filePath) return '';
-  const origin = (process.env.SITE_URL || '').trim().replace(/\/+$/, '');
+  const origin = (originOverride || process.env.SITE_URL || '').trim().replace(/\/+$/, '');
   const webPath = toWebPath(filePath, basePath);
   if (!origin) return webPath;
   return `${origin}${webPath}`;

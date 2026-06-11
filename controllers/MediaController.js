@@ -10,12 +10,20 @@ const diskPathFromRelative = (relativePath) => {
   return path.join(uploadRoot, rel);
 };
 
-const withPublicUrls = (asset) => {
+const withPublicUrls = (asset, req) => {
   const data = asset.toJSON ? asset.toJSON() : { ...asset };
   const basePath = process.env.PUBLIC_BASE_PATH || '';
   const rawPath = data.filePath;
   data.filePath = toWebPath(rawPath, basePath);
-  data.publicUrl = toPublicUrl(rawPath, basePath);
+
+  let originOverride = null;
+  if (req) {
+    const proto = req.headers['x-forwarded-proto'] || req.protocol || 'http';
+    const host = req.headers['x-forwarded-host'] || req.get('host');
+    originOverride = `${proto}://${host}`;
+  }
+
+  data.publicUrl = toPublicUrl(rawPath, basePath, originOverride);
   data.thumbnailPath = null;
   data.versions = null;
   return data;
@@ -43,7 +51,7 @@ exports.uploadImage = async (req, res) => {
       versions: null
     });
 
-    res.status(201).json(withPublicUrls(asset));
+    res.status(201).json(withPublicUrls(asset, req));
   } catch (error) {
     console.error('Error creating image asset:', error);
     res.status(500).json({ error: error.message });
@@ -70,7 +78,7 @@ exports.uploadVideo = async (req, res) => {
       versions: null
     });
 
-    res.status(201).json(withPublicUrls(asset));
+    res.status(201).json(withPublicUrls(asset, req));
   } catch (error) {
     console.error('Error creating video asset:', error);
     res.status(500).json({ error: error.message });
@@ -82,7 +90,7 @@ exports.getAllMedia = async (req, res) => {
     const assets = await MediaAsset.findAll({
       order: [['createdAt', 'DESC']]
     });
-    res.json(assets.map(withPublicUrls));
+    res.json(assets.map(asset => withPublicUrls(asset, req)));
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
