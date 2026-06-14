@@ -4,9 +4,17 @@
 
 const collapseSlashes = (path) => path.replace(/\/\/+/g, '/');
 
+const normalizeAbsoluteUrl = (value) => {
+  if (!value) return value;
+  const fixed = value.replace(/^(https?:)\/+/, '$1//');
+  return fixed.replace(/([^:]\/)\/+/, '$1');
+};
+
+const isAbsoluteUrl = (value) => /^(https?:\/\/|https?:\/[^/])/i.test(value);
+
 const toWebPath = (value, basePath = '') => {
   if (!value) return value;
-  if (value.startsWith('http://') || value.startsWith('https://')) return value;
+  if (isAbsoluteUrl(value)) return normalizeAbsoluteUrl(value);
 
   const path = collapseSlashes(value.startsWith('/') ? value : `/${value}`);
   const base = (basePath || '').trim().replace(/\/+$/, '');
@@ -22,6 +30,7 @@ const toPublicUrl = (filePath, basePath = process.env.PUBLIC_BASE_PATH || '', or
   const origin = (originOverride || process.env.SITE_URL || '').trim().replace(/\/+$/, '');
   const webPath = toWebPath(filePath, basePath);
   if (!origin) return webPath;
+  if (isAbsoluteUrl(webPath)) return normalizeAbsoluteUrl(webPath);
   return `${origin}${webPath}`;
 };
 
