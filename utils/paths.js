@@ -7,7 +7,10 @@ const collapseSlashes = (path) => path.replace(/\/\/+/g, '/');
 const normalizeAbsoluteUrl = (value) => {
   if (!value) return value;
   const fixed = value.replace(/^(https?:)\/+/, '$1//');
-  return fixed.replace(/([^:]\/)\/+/, '$1');
+  let normalized = fixed.replace(/([^:]\/)\/+/, '$1');
+  normalized = normalized.replace(/^(https?:\/\/[^/]+)\/(?:https?:\/\/[^/]+)(\/.*)$/i, '$1$2');
+  normalized = normalized.replace(/^(https?:\/\/[^/]+)\/(?:https?:\/[^/]+)(\/.*)$/i, '$1$2');
+  return normalized;
 };
 
 const isAbsoluteUrl = (value) => /^(https?:\/\/|https?:\/[^/])/i.test(value);
