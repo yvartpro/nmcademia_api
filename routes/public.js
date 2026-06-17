@@ -12,6 +12,7 @@ const TestimonialController = require('../controllers/TestimonialController');
 const FounderController = require('../controllers/FounderController');
 const ManufacturingPartnerController = require('../controllers/ManufacturingPartnerController');
 const EarningStreamController = require('../controllers/EarningStreamController');
+const WayController = require('../controllers/WayController');
 
 // Leads
 router.post('/leads', LeadController.createLead);
@@ -36,6 +37,7 @@ router.get('/testimonials', TestimonialController.getAllTestimonials);
 router.get('/founders', FounderController.getAllFounders);
 router.get('/manufacturing-partners', ManufacturingPartnerController.getAllManufacturingPartners);
 router.get('/earning-streams', EarningStreamController.getAllEarningStreams);
+router.get('/ways', WayController.getAllWays);
 
 // Chat Guest Endpoints
 router.post('/chat/session', ChatController.startSession);

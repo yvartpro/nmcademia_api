@@ -16,6 +16,7 @@ const TestimonialController = require('../controllers/TestimonialController');
 const FounderController = require('../controllers/FounderController');
 const ManufacturingPartnerController = require('../controllers/ManufacturingPartnerController');
 const EarningStreamController = require('../controllers/EarningStreamController');
+const WayController = require('../controllers/WayController');
 
 // Apply auth middleware to ALL admin routes
 router.use(requireAuth);
@@ -72,6 +73,12 @@ router.get('/earning-streams', EarningStreamController.getAllEarningStreamsAdmin
 router.post('/earning-streams', EarningStreamController.createEarningStream);
 router.put('/earning-streams/:id', EarningStreamController.updateEarningStream);
 router.delete('/earning-streams/:id', EarningStreamController.deleteEarningStream);
+
+// Ways of Earning
+router.get('/ways', WayController.getAllWaysAdmin);
+router.post('/ways', WayController.createWay);
+router.put('/ways/:id', WayController.updateWay);
+router.delete('/ways/:id', WayController.deleteWay);
 
 // Chat Admin Endpoints
 router.get('/chat/sessions', ChatController.getActiveSessions);

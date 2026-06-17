@@ -22,6 +22,7 @@ db.Testimonial = require('./Testimonial')(sequelize, DataTypes);
 db.Founder = require('./Founder')(sequelize, DataTypes);
 db.ManufacturingPartner = require('./ManufacturingPartner')(sequelize, DataTypes);
 db.EarningStream = require('./EarningStream')(sequelize, DataTypes);
+db.Way = require('./Way')(sequelize, DataTypes);
 
 // --- Associations ---
 
