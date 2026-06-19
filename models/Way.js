@@ -17,6 +17,20 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    mediaType: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      validate: {
+        isIn: {
+          args: [['text', 'image', 'video']],
+          msg: 'mediaType must be text, image, or video'
+        }
+      }
+    },
+    mediaUrl: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
     body: {
       type: DataTypes.JSON,
       allowNull: true

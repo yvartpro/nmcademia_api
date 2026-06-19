@@ -12,13 +12,26 @@ const parseBody = (body) => {
   return body;
 };
 
+const normalizeWayBody = (way) => {
+  if (!way) return way;
+  const item = way.toJSON ? way.toJSON() : { ...way };
+  if (item.body && typeof item.body === 'string') {
+    try {
+      item.body = JSON.parse(item.body);
+    } catch (err) {
+      item.body = { description: item.body };
+    }
+  }
+  return item;
+};
+
 exports.getAllWays = async (req, res) => {
   try {
     const ways = await Way.findAll({
       where: { active: true },
       order: [['order', 'ASC']]
     });
-    res.json(ways);
+    res.json(ways.map(normalizeWayBody));
   } catch (err) {
     console.error('getAllWays error:', err);
     res.status(500).json({ message: 'Failed to fetch ways of earning' });
@@ -28,21 +41,30 @@ exports.getAllWays = async (req, res) => {
 exports.getAllWaysAdmin = async (req, res) => {
   try {
     const ways = await Way.findAll({ order: [['order', 'ASC']] });
-    res.json(ways);
+    res.json(ways.map(normalizeWayBody));
   } catch (err) {
     console.error('getAllWaysAdmin error:', err);
     res.status(500).json({ message: 'Failed to fetch ways of earning' });
   }
 };
 
+const normalizeMediaType = (type) => {
+  const allowed = ['text', 'image', 'video'];
+  if (!type) return null;
+  const value = String(type).trim().toLowerCase();
+  return allowed.includes(value) ? value : null;
+};
+
 exports.createWay = async (req, res) => {
   try {
-    const { slug, title, subtitle, image, body, order, active } = req.body;
+    const { slug, title, subtitle, image, mediaType, mediaUrl, body, order, active } = req.body;
     const way = await Way.create({
       slug,
       title,
       subtitle,
       image,
+      mediaType: normalizeMediaType(mediaType),
+      mediaUrl: mediaUrl || null,
       body: parseBody(body),
       order,
       active
@@ -57,7 +79,7 @@ exports.createWay = async (req, res) => {
 exports.updateWay = async (req, res) => {
   try {
     const { id } = req.params;
-    const { slug, title, subtitle, image, body, order, active } = req.body;
+    const { slug, title, subtitle, image, mediaType, mediaUrl, body, order, active } = req.body;
     const way = await Way.findByPk(id);
     if (!way) return res.status(404).json({ message: 'Way of earning not found' });
     await way.update({
@@ -65,6 +87,8 @@ exports.updateWay = async (req, res) => {
       title,
       subtitle,
       image,
+      mediaType: normalizeMediaType(mediaType),
+      mediaUrl: mediaUrl || null,
       body: parseBody(body),
       order,
       active
