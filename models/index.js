@@ -43,6 +43,9 @@ db.Testimonial.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'photo
 db.Founder.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'photo' });
 db.ManufacturingPartner.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'logo' });
 
+// EarningStream media (optional image/video)
+db.EarningStream.belongsTo(db.MediaAsset, { foreignKey: 'mediaId', as: 'media' });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

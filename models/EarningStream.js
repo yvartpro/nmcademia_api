@@ -17,9 +17,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: true
     },
+    mediaType: {
+      type: DataTypes.ENUM('image', 'video'),
+      defaultValue: 'image',
+      allowNull: true
+    },
+    mediaId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     icon: {
-      // No DB default: MySQL rejects emoji in DEFAULT on latin1 / strict hosts.
-      // Use seed data or app fallback (PresentationPage: stream.icon || '💰').
       type: DataTypes.STRING(32),
       allowNull: true
     },
