@@ -1,4 +1,5 @@
-const { EarningStream } = require('../models');
+const { EarningStream, MediaAsset } = require('../models');
+
 
 // GET /admin/earning-streams (all, including inactive)
 exports.getAllEarningStreamsAdmin = async (req, res) => {
@@ -18,7 +19,8 @@ exports.getAllEarningStreams = async (req, res) => {
   try {
     const streams = await EarningStream.findAll({
       where: { active: true },
-      order: [['order', 'ASC']]
+      order: [['order', 'ASC']],
+      include: [{ model: MediaAsset, as: 'media' }]
     });
     res.json(streams);
   } catch (err) {
