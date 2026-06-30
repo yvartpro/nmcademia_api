@@ -1,4 +1,5 @@
 const { ChatSession, ChatMessage } = require('../models');
+const { getIO } = require('../utils/socket');
 
 // Guest Endpoints
 exports.startSession = async (req, res) => {
@@ -20,6 +21,12 @@ exports.startSession = async (req, res) => {
         }
         existing.lastMessageAt = new Date();
         await existing.save();
+
+        const io = getIO();
+        if (io) {
+          io.to('admin_room').emit('session_updated', existing);
+        }
+
         return res.status(200).json(existing);
       }
     }
@@ -31,6 +38,12 @@ exports.startSession = async (req, res) => {
       status: 'active',
       lastMessageAt: new Date()
     });
+
+    const io = getIO();
+    if (io) {
+      io.to('admin_room').emit('session_updated', session);
+    }
+
     res.status(201).json(session);
   } catch (error) {
     console.error('Start session error:', error);
@@ -59,6 +72,12 @@ exports.sendGuestMessage = async (req, res) => {
 
     session.lastMessageAt = new Date();
     await session.save();
+
+    const io = getIO();
+    if (io) {
+      io.to(`chat_session_${chatSessionId}`).emit('message_received', chatMsg);
+      io.to('admin_room').emit('session_updated', session);
+    }
 
     res.status(201).json(chatMsg);
   } catch (error) {
@@ -137,6 +156,12 @@ exports.sendTrainerReply = async (req, res) => {
     session.lastMessageAt = new Date();
     await session.save();
 
+    const io = getIO();
+    if (io) {
+      io.to(`chat_session_${chatSessionId}`).emit('message_received', chatMsg);
+      io.to('admin_room').emit('session_updated', session);
+    }
+
     res.status(201).json(chatMsg);
   } catch (error) {
     console.error('Send trainer reply error:', error);
@@ -153,6 +178,13 @@ exports.closeSession = async (req, res) => {
     }
     session.status = 'closed';
     await session.save();
+
+    const io = getIO();
+    if (io) {
+      io.to(`chat_session_${chatSessionId}`).emit('session_closed', { chatSessionId });
+      io.to('admin_room').emit('session_closed', { chatSessionId });
+    }
+
     res.json({ message: 'Session closed successfully', session });
   } catch (error) {
     console.error('Close session error:', error);

@@ -9,8 +9,15 @@ const adminRoutes = require('./routes/admin');
 const publicRoutes = require('./routes/public');
 const authRoutes = require('./routes/auth');
 
+const http = require('http');
+const { initSocket } = require('./utils/socket');
+
 const app = express();
+const server = http.createServer(app);
 const PORT = process.env.PORT || 5000;
+
+// Initialize WebSockets
+initSocket(server);
 
 // Enable security headers with relaxed policies for local assets and frames (if needed for videos)
 app.use(helmet({
@@ -52,10 +59,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-const server = app.listen(PORT, '0.0.0.0', () => {
+const runningServer = server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
 // Increase timeout for video processing (10 mins)
-server.timeout = 600000;
-server.keepAliveTimeout = 600000;
+runningServer.timeout = 600000;
+runningServer.keepAliveTimeout = 600000;
