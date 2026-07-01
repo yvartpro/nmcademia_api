@@ -4,6 +4,10 @@ exports.createLead = async (req, res) => {
   try {
     const { fullName, email, phone, country, profileType, challenges, consent } = req.body;
 
+    if (!req.owner) {
+      return res.status(400).json({ message: 'Owner context missing for lead submission.' });
+    }
+
     if (!fullName || !email || !country || !profileType) {
       return res.status(400).json({ message: 'Full name, email, country and profile type are required' });
     }
@@ -20,7 +24,8 @@ exports.createLead = async (req, res) => {
       profileType,
       challenges: typeof challenges === 'object' ? JSON.stringify(challenges) : challenges,
       consent,
-      status: 'Pending'
+      status: 'Pending',
+      ownerId: req.owner.id
     });
 
     res.status(201).json({
@@ -36,7 +41,7 @@ exports.createLead = async (req, res) => {
 exports.getAllLeads = async (req, res) => {
   try {
     const { country, status, profileType } = req.query;
-    const where = {};
+    const where = { ownerId: req.user.ownerId };
 
     if (country) where.country = country;
     if (status) where.status = status;

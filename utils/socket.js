@@ -18,9 +18,10 @@ function initSocket(server) {
     });
 
     // Join the general admin room
-    socket.on('join_admin', () => {
-      socket.join('admin_room');
-      console.log(`Socket ${socket.id} joined admin_room`);
+    socket.on('join_admin', (ownerId) => {
+      const room = ownerId ? `admin_room_${ownerId}` : 'admin_room';
+      socket.join(room);
+      console.log(`Socket ${socket.id} joined ${room}`);
     });
 
     socket.on('disconnect', () => {

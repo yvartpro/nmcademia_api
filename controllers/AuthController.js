@@ -1,9 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-
-const ADMIN_USER = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASS = process.env.ADMIN_PASS || 'password';
-const hashedPass = bcrypt.hashSync(ADMIN_PASS, 10);
+const { Owner } = require('../models');
 
 exports.login = async (req, res) => {
   try {
@@ -13,24 +10,30 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Username and password required' });
     }
 
-    if (username !== ADMIN_USER) {
+    const owner = await Owner.findOne({ where: { username } });
+    if (!owner) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const isValidPassword = await bcrypt.compare(password, hashedPass);
+    const isValidPassword = await bcrypt.compare(password, owner.passwordHash);
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
     const token = jwt.sign(
-      { username: ADMIN_USER, role: 'admin' },
+      { 
+        ownerId: owner.id,
+        username: owner.username, 
+        role: 'admin' 
+      },
       process.env.JWT_SECRET || 'secret-key',
       { expiresIn: '24h' }
     );
 
     res.json({
       message: 'Login successful',
-      token
+      token,
+      ownerId: owner.id
     });
   } catch (error) {
     console.error('Login error:', error);

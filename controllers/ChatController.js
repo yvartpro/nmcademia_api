@@ -6,10 +6,18 @@ exports.startSession = async (req, res) => {
   try {
     const { visitorName, email, phone } = req.body;
 
+    if (!req.owner) {
+      return res.status(400).json({ message: 'Owner context missing for chat session.' });
+    }
+
     // Returning visitor: reuse their active session instead of creating another
     if (email && String(email).trim()) {
       const existing = await ChatSession.findOne({
-        where: { email: String(email).trim(), status: 'active' },
+        where: { 
+          email: String(email).trim(), 
+          status: 'active',
+          ownerId: req.owner.id 
+        },
         order: [['lastMessageAt', 'DESC']]
       });
       if (existing) {
@@ -24,7 +32,7 @@ exports.startSession = async (req, res) => {
 
         const io = getIO();
         if (io) {
-          io.to('admin_room').emit('session_updated', existing);
+          io.to(`admin_room_${req.owner.id}`).emit('session_updated', existing);
         }
 
         return res.status(200).json(existing);
@@ -36,12 +44,13 @@ exports.startSession = async (req, res) => {
       email: email ? String(email).trim() : null,
       phone,
       status: 'active',
-      lastMessageAt: new Date()
+      lastMessageAt: new Date(),
+      ownerId: req.owner.id
     });
 
     const io = getIO();
     if (io) {
-      io.to('admin_room').emit('session_updated', session);
+      io.to(`admin_room_${req.owner.id}`).emit('session_updated', session);
     }
 
     res.status(201).json(session);
@@ -76,7 +85,7 @@ exports.sendGuestMessage = async (req, res) => {
     const io = getIO();
     if (io) {
       io.to(`chat_session_${chatSessionId}`).emit('message_received', chatMsg);
-      io.to('admin_room').emit('session_updated', session);
+      io.to(`admin_room_${session.ownerId}`).emit('session_updated', session);
     }
 
     res.status(201).json(chatMsg);
@@ -104,6 +113,7 @@ exports.getGuestMessages = async (req, res) => {
 exports.getActiveSessions = async (req, res) => {
   try {
     const sessions = await ChatSession.findAll({
+      where: { ownerId: req.user.ownerId },
       order: [['lastMessageAt', 'DESC']]
     });
     res.json(sessions);
@@ -159,7 +169,7 @@ exports.sendTrainerReply = async (req, res) => {
     const io = getIO();
     if (io) {
       io.to(`chat_session_${chatSessionId}`).emit('message_received', chatMsg);
-      io.to('admin_room').emit('session_updated', session);
+      io.to(`admin_room_${session.ownerId}`).emit('session_updated', session);
     }
 
     res.status(201).json(chatMsg);
@@ -182,7 +192,7 @@ exports.closeSession = async (req, res) => {
     const io = getIO();
     if (io) {
       io.to(`chat_session_${chatSessionId}`).emit('session_closed', { chatSessionId });
-      io.to('admin_room').emit('session_closed', { chatSessionId });
+      io.to(`admin_room_${session.ownerId}`).emit('session_closed', { chatSessionId });
     }
 
     res.json({ message: 'Session closed successfully', session });

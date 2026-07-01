@@ -13,6 +13,15 @@ const FounderController = require('../controllers/FounderController');
 const ManufacturingPartnerController = require('../controllers/ManufacturingPartnerController');
 const EarningStreamController = require('../controllers/EarningStreamController');
 const WayController = require('../controllers/WayController');
+const OwnerController = require('../controllers/OwnerController');
+
+const tenantMiddleware = require('../middleware/tenant');
+
+// Apply tenant middleware to all public routes
+router.use(tenantMiddleware);
+
+// Owner Profile
+router.get('/owner/profile', OwnerController.getPublicProfile);
 
 // Leads
 router.post('/leads', LeadController.createLead);

@@ -24,6 +24,9 @@ db.ManufacturingPartner = require('./ManufacturingPartner')(sequelize, DataTypes
 db.EarningStream = require('./EarningStream')(sequelize, DataTypes);
 db.Way = require('./Way')(sequelize, DataTypes);
 
+// Multi-tenant core
+db.Owner = require('./Owner')(sequelize, DataTypes);
+
 // --- Associations ---
 
 // Package pricing per country
@@ -45,6 +48,16 @@ db.ManufacturingPartner.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', a
 
 // EarningStream media (optional image/video)
 db.EarningStream.belongsTo(db.MediaAsset, { foreignKey: 'mediaId', as: 'media' });
+
+// Owner media
+db.Owner.belongsTo(db.MediaAsset, { foreignKey: 'photoId', as: 'photo' });
+
+// Multi-tenant associations (Owners own their leads and chats)
+db.Owner.hasMany(db.Lead, { foreignKey: 'ownerId', as: 'leads', onDelete: 'CASCADE' });
+db.Lead.belongsTo(db.Owner, { foreignKey: 'ownerId' });
+
+db.Owner.hasMany(db.ChatSession, { foreignKey: 'ownerId', as: 'chatSessions', onDelete: 'CASCADE' });
+db.ChatSession.belongsTo(db.Owner, { foreignKey: 'ownerId' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

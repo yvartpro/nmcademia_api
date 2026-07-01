@@ -17,9 +17,14 @@ const FounderController = require('../controllers/FounderController');
 const ManufacturingPartnerController = require('../controllers/ManufacturingPartnerController');
 const EarningStreamController = require('../controllers/EarningStreamController');
 const WayController = require('../controllers/WayController');
+const OwnerController = require('../controllers/OwnerController');
 
 // Apply auth middleware to ALL admin routes
 router.use(requireAuth);
+
+// Owner Profile Management
+router.get('/owner/profile', OwnerController.getAdminProfile);
+router.put('/owner/profile', OwnerController.updateProfile);
 
 // Leads
 router.get('/leads', LeadController.getAllLeads);
