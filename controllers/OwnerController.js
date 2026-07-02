@@ -11,6 +11,7 @@ exports.getPublicProfile = async (req, res) => {
     res.json({
       name: owner.name,
       bio: owner.bio,
+      intro: owner.intro || null,
       whatsappNumber: owner.whatsappNumber,
       domainName: owner.domainName,
       photo: owner.photo || null
@@ -44,7 +45,7 @@ exports.getAdminProfile = async (req, res) => {
 // Update profile by logged-in admin
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, bio, whatsappNumber, domainName, photoId } = req.body;
+    const { name, bio, intro, whatsappNumber, domainName, photoId } = req.body;
     
     const owner = await Owner.findByPk(req.user.ownerId);
     if (!owner) {
@@ -62,6 +63,7 @@ exports.updateProfile = async (req, res) => {
     await owner.update({
       name,
       bio,
+      intro,
       whatsappNumber,
       domainName,
       photoId
