@@ -65,6 +65,19 @@ async function seed() {
         description: 'Landing page hero CTA button label'
       },
       {
+        key: 'landing_journeys',
+        value: JSON.stringify([
+          { id: 'new-to-nm', title: 'New to Network Marketing', desc: 'Learn the fundamentals of duplication, binary systems, and digital lead generation from the ground up.', ctaLabel: 'Onboarding', image: '' },
+          { id: 'already-in-nm', title: 'Already in Network Marketing', desc: 'Skip basic definitions. Supercharge your coaching, team retention, upline support, and global recruiting.', ctaLabel: 'Assessment', image: '' },
+          { id: 'switch-companies', title: 'Want to Switch Companies', desc: 'Evaluate key company choices, group points accumulation, and position early inside pioneer nodes.', ctaLabel: 'Evaluation', image: '' },
+          { id: 'exploring', title: 'Just Exploring Opportunities', desc: 'Take a short, visual presentation of the company plan and explore the network economy at your own pace.', ctaLabel: 'Qualifications', image: '' },
+          { id: 'income-diversification', title: 'Tired of Depending on Single Income', desc: 'Learn how side network leverage works without quitting your job, and buffer yourself against inflation.', ctaLabel: 'Benefits', image: '' },
+          { id: 'jobless', title: 'Tired of Being Jobless', desc: 'Gain high-demand marketing, digital leadership, and communication skills with a zero-risk startup model.', ctaLabel: 'Hope Flow', image: '' },
+          { id: 'fast-track', title: 'I Want This Business By All Means', desc: 'Compare entry packages immediately, get assigned a direct mentor, and secure WhatsApp registration assistance.', ctaLabel: 'Fast Track', image: '' }
+        ]),
+        description: 'Landing page journey cards configuration (JSON array)'
+      },
+      {
         key: 'segment_options',
         value: JSON.stringify(["I am new to network marketing","I am already in network marketing","I am in network marketing but not satisfied and want to switch companies","I am just exploring opportunities","I am tired of depending on one source of income","I am tired of being jobless","I want this business by all means"]),
         description: 'Landing page wizard segment selection options (JSON array)'
