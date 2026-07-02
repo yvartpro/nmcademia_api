@@ -60,6 +60,11 @@ async function seed() {
         description: 'Eric Worre or intro "What is Network Marketing" video embed URL (shown in Mission section)'
       },
       {
+        key: 'risk_video',
+        value: '',
+        description: 'Risk/compliance short video (site video asset)'
+      },
+      {
         key: 'landing_cta_text',
         value: 'Enter the Vision',
         description: 'Landing page hero CTA button label'
