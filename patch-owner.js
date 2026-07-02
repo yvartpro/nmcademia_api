@@ -6,25 +6,38 @@ async function patch() {
     console.log('Syncing database schema...');
     await sequelize.sync({ alter: true });
     
-    console.log('Checking for default owner...');
-    const count = await Owner.count();
+    console.log('Seeding test owners...');
+    const hashedPass = bcrypt.hashSync('password', 10);
     
-    if (count === 0) {
-      console.log('No owners found. Creating default admin owner...');
-      const hashedPass = bcrypt.hashSync('password', 10);
-      await Owner.create({
+    // 1. Default fallback owner
+    const [admin, adminCreated] = await Owner.findOrCreate({
+      where: { username: 'admin' },
+      defaults: {
         domainName: 'localhost',
-        username: 'admin',
         passwordHash: hashedPass,
         name: 'Default Administrator',
-        bio: 'Welcome to the platform. Please update your profile.',
-        whatsappNumber: '1234567890'
-      });
-      console.log('Default owner created: username "admin", password "password".');
-    } else {
-      console.log('Owners already exist. Skipping creation.');
+        bio: 'Welcome to the platform. Please customize your profile.',
+        whatsappNumber: '+2348030001111'
+      }
+    });
+    if (adminCreated) {
+      console.log('Created default admin owner: username "admin", password "password".');
     }
-    
+//create divine user
+    const [divine, divineCreated] = await Owner.findOrCreate({
+      where: { username: 'divine' },
+      defaults: {
+        domainName: 'divine.local',
+        passwordHash: hashedPass,
+        name: 'Divine IRADUKUNDA',
+        bio: 'Hello! I am Divine, a senior team leader and distributor. I specialize in training automation and fast-track sales.',
+        whatsappNumber: '+25769667239'
+      }
+    });
+    if (divineCreated) {
+      console.log('Created Divine local owner: username "divine", password "password" on nmacademia.bi.');
+    }
+
     console.log('Database patching completed successfully.');
     process.exit(0);
   } catch (error) {
