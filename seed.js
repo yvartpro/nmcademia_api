@@ -148,9 +148,9 @@ async function seed() {
         description: 'Cashflow quadrant image URL or media path'
       },
       {
-        key: 'binary_tree_image',
+        key: 'binary_tree_video',
         value: '',
-        description: 'Binary tree diagram image URL or media path'
+        description: 'Binary tree diagram explainer video URL or media path'
       },
       {
         key: 'binary_system_explanation',
