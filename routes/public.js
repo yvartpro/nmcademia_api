@@ -14,6 +14,7 @@ const ManufacturingPartnerController = require('../controllers/ManufacturingPart
 const EarningStreamController = require('../controllers/EarningStreamController');
 const WayController = require('../controllers/WayController');
 const OwnerController = require('../controllers/OwnerController');
+const PresentationController = require('../controllers/PresentationController');
 
 const tenantMiddleware = require('../middleware/tenant');
 
@@ -47,6 +48,9 @@ router.get('/founders', FounderController.getAllFounders);
 router.get('/manufacturing-partners', ManufacturingPartnerController.getAllManufacturingPartners);
 router.get('/earning-streams', EarningStreamController.getAllEarningStreams);
 router.get('/ways', WayController.getAllWays);
+
+// Presentations
+router.get('/presentations/:countryCode', PresentationController.getPresentationByCountry);
 
 // Chat Guest Endpoints
 router.post('/chat/session', ChatController.startSession);

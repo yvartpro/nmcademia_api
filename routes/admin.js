@@ -18,6 +18,7 @@ const ManufacturingPartnerController = require('../controllers/ManufacturingPart
 const EarningStreamController = require('../controllers/EarningStreamController');
 const WayController = require('../controllers/WayController');
 const OwnerController = require('../controllers/OwnerController');
+const PresentationController = require('../controllers/PresentationController');
 
 // Apply auth middleware to ALL admin routes
 router.use(requireAuth);
@@ -96,5 +97,11 @@ router.get('/media', MediaController.getAllMedia);
 router.post('/media/image', uploadImage.single('file'), optimizeImage, MediaController.uploadImage);
 router.post('/media/video', uploadVideo.single('file'), optimizeVideo, MediaController.uploadVideo);
 router.delete('/media/:id', MediaController.deleteMedia);
+
+// Presentations
+router.get('/presentations', PresentationController.getAllPresentationsAdmin);
+router.post('/presentations', PresentationController.createPresentation);
+router.put('/presentations/:id', PresentationController.updatePresentation);
+router.delete('/presentations/:id', PresentationController.deletePresentation);
 
 module.exports = router;

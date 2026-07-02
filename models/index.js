@@ -23,6 +23,8 @@ db.Founder = require('./Founder')(sequelize, DataTypes);
 db.ManufacturingPartner = require('./ManufacturingPartner')(sequelize, DataTypes);
 db.EarningStream = require('./EarningStream')(sequelize, DataTypes);
 db.Way = require('./Way')(sequelize, DataTypes);
+db.Presentation = require('./Presentation')(sequelize, DataTypes);
+db.PresentationCountry = require('./PresentationCountry')(sequelize, DataTypes);
 
 // Multi-tenant core
 db.Owner = require('./Owner')(sequelize, DataTypes);
@@ -48,6 +50,21 @@ db.ManufacturingPartner.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', a
 
 // EarningStream media (optional image/video)
 db.EarningStream.belongsTo(db.MediaAsset, { foreignKey: 'mediaId', as: 'media' });
+
+// Presentation media and countries
+db.Presentation.belongsTo(db.MediaAsset, { foreignKey: 'mediaId', as: 'media' });
+db.Presentation.belongsToMany(db.Country, {
+  through: db.PresentationCountry,
+  foreignKey: 'presentationId',
+  otherKey: 'countryId',
+  as: 'countries'
+});
+db.Country.belongsToMany(db.Presentation, {
+  through: db.PresentationCountry,
+  foreignKey: 'countryId',
+  otherKey: 'presentationId',
+  as: 'presentations'
+});
 
 // Owner media
 db.Owner.belongsTo(db.MediaAsset, { foreignKey: 'photoId', as: 'photo' });
