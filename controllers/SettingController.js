@@ -1,4 +1,4 @@
-const { Setting } = require('../models');
+const { Setting, MediaAsset } = require('../models');
 
 exports.getAllSettings = async (req, res) => {
   try {
@@ -8,6 +8,43 @@ exports.getAllSettings = async (req, res) => {
     settings.forEach(s => {
       configMap[s.key] = s.value;
     });
+
+    // Automatically resolve thumbnails for any settings that point to media video assets
+    try {
+      const videoAssets = await MediaAsset.findAll({
+        where: { type: 'video' },
+        attributes: ['filePath', 'thumbnailPath']
+      });
+
+      // Map filePath (normalized) to thumbnailPath
+      const pathMap = {};
+      videoAssets.forEach(asset => {
+        if (asset.filePath) {
+          // Normalize leading/trailing slashes and convert to lowercase for robust matching
+          const normalized = asset.filePath.replace(/^\/+|\/+$/g, '').toLowerCase();
+          if (asset.thumbnailPath) {
+            pathMap[normalized] = asset.thumbnailPath;
+          }
+        }
+      });
+
+      // Match settings values against pathMap
+      Object.entries(configMap).forEach(([key, val]) => {
+        if (typeof val === 'string' && val.trim()) {
+          const cleanVal = val.trim().replace(/^\/+|\/+$/g, '').toLowerCase();
+          if (pathMap[cleanVal]) {
+            // Automatically set corresponding thumbnail setting dynamically if not already set
+            const thumbKey = `${key}_thumbnail`;
+            if (!configMap[thumbKey]) {
+              configMap[thumbKey] = pathMap[cleanVal];
+            }
+          }
+        }
+      });
+    } catch (dbErr) {
+      console.error('Failed to auto-resolve settings video thumbnails:', dbErr);
+    }
+
     res.json(configMap);
   } catch (error) {
     console.error('Get settings error:', error);
