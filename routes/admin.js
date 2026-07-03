@@ -95,7 +95,8 @@ router.post('/chat/sessions/:chatSessionId/close', ChatController.closeSession);
 // Media
 router.get('/media', MediaController.getAllMedia);
 router.post('/media/image', uploadImage.single('file'), optimizeImage, MediaController.uploadImage);
-router.post('/media/video', uploadVideo.single('file'), optimizeVideo, MediaController.uploadVideo);
+// Upload video with optional thumbnail (both saved in a DB transaction)
+router.post('/media/video-with-thumbnail', uploadVideo.single('file'), optimizeVideo, uploadImage.single('thumbnail'), optimizeImage, MediaController.uploadVideoWithThumbnail);
 router.delete('/media/:id', MediaController.deleteMedia);
 
 // Presentations

@@ -24,8 +24,8 @@ const withPublicUrls = (asset, req) => {
   }
 
   data.publicUrl = toPublicUrl(rawPath, basePath, originOverride);
-  data.thumbnailPath = null;
-  data.versions = null;
+  data.thumbnailPath = data.thumbnailPath ? toWebPath(data.thumbnailPath, basePath) : null;
+  data.versions = data.versions || null;
   return data;
 };
 
@@ -81,6 +81,81 @@ exports.uploadVideo = async (req, res) => {
     res.status(201).json(withPublicUrls(asset, req));
   } catch (error) {
     console.error('Error creating video asset:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Upload video with optional thumbnail image; both saved in a single DB transaction
+exports.uploadVideoWithThumbnail = async (req, res) => {
+  const { sequelize } = require('../models');
+
+  try {
+    if (!req.optimizedVideo) {
+      return res.status(400).json({ error: 'No video uploaded' });
+    }
+
+    const t = await sequelize.transaction();
+    try {
+      let thumbnailPath = null;
+
+      // If a thumbnail was uploaded and optimized, create an image MediaAsset first
+      if (req.optimizedImage) {
+        const { path: imgPath, mimeType, metadata } = req.optimizedImage;
+        const imageAsset = await MediaAsset.create({
+          type: 'image',
+          title: req.body.thumbnailTitle || req.body.title || req.file?.originalname || 'Thumbnail',
+          description: req.body.thumbnailDescription || req.body.description,
+          excerpt: req.body.excerpt,
+          filePath: imgPath,
+          thumbnailPath: null,
+          mimeType,
+          fileSize: metadata.size,
+          width: metadata.width,
+          height: metadata.height,
+          versions: null
+        }, { transaction: t });
+
+        thumbnailPath = imageAsset.filePath;
+      }
+
+      // Create video asset and reference the thumbnailPath (can be null)
+      const { path: filePath, mimeType, size } = req.optimizedVideo;
+      const videoAsset = await MediaAsset.create({
+        type: 'video',
+        title: req.body.title || req.file?.originalname || 'Video',
+        description: req.body.description,
+        excerpt: req.body.excerpt,
+        filePath,
+        thumbnailPath: thumbnailPath,
+        mimeType,
+        fileSize: size,
+        versions: null
+      }, { transaction: t });
+
+      await t.commit();
+
+      res.status(201).json(withPublicUrls(videoAsset, req));
+    } catch (err) {
+      await t.rollback();
+      // Cleanup files written to disk when transaction fails
+      try {
+        if (req.optimizedVideo && req.optimizedVideo.path) {
+          const videoDisk = diskPathFromRelative(req.optimizedVideo.path);
+          if (videoDisk && fs.existsSync(videoDisk)) fs.unlinkSync(videoDisk);
+        }
+        if (req.optimizedImage && req.optimizedImage.path) {
+          const imgDisk = diskPathFromRelative(req.optimizedImage.path);
+          if (imgDisk && fs.existsSync(imgDisk)) fs.unlinkSync(imgDisk);
+        }
+      } catch (cleanupErr) {
+        console.error('Error during cleanup after failed transactional upload:', cleanupErr);
+      }
+
+      console.error('Transactional upload failed:', err);
+      res.status(500).json({ error: 'Failed to save media assets' });
+    }
+  } catch (error) {
+    console.error('Error processing upload:', error);
     res.status(500).json({ error: error.message });
   }
 };
