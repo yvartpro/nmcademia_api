@@ -184,9 +184,65 @@ exports.deleteMedia = async (req, res) => {
       fs.unlinkSync(diskPath);
     }
 
+    // Also delete the thumbnail image file and its DB record if it exists
+    if (asset.thumbnailPath) {
+      const thumbDisk = diskPathFromRelative(asset.thumbnailPath);
+      if (thumbDisk && fs.existsSync(thumbDisk)) {
+        try { fs.unlinkSync(thumbDisk); } catch (_) {}
+      }
+    }
+
     await asset.destroy();
     res.json({ message: 'Media deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
+
+// Replace the thumbnail of an existing video asset
+exports.updateThumbnail = async (req, res) => {
+  try {
+    const asset = await MediaAsset.findByPk(req.params.id);
+    if (!asset) return res.status(404).json({ error: 'Media not found' });
+    if (asset.type !== 'video') {
+      return res.status(400).json({ error: 'Thumbnail can only be updated on video assets' });
+    }
+    if (!req.optimizedImage) {
+      return res.status(400).json({ error: 'No thumbnail image uploaded' });
+    }
+
+    // Delete the old thumbnail file from disk (best-effort)
+    if (asset.thumbnailPath) {
+      const oldThumbDisk = diskPathFromRelative(asset.thumbnailPath);
+      if (oldThumbDisk && fs.existsSync(oldThumbDisk)) {
+        try { fs.unlinkSync(oldThumbDisk); } catch (_) {}
+      }
+    }
+
+    const { path: imgPath, mimeType, metadata } = req.optimizedImage;
+
+    // Create a new image MediaAsset for the thumbnail
+    const imageAsset = await MediaAsset.create({
+      type: 'image',
+      title: req.body.title || asset.title || 'Thumbnail',
+      description: req.body.description || asset.description,
+      excerpt: null,
+      filePath: imgPath,
+      thumbnailPath: null,
+      mimeType,
+      fileSize: metadata.size,
+      width: metadata.width,
+      height: metadata.height,
+      versions: null
+    });
+
+    // Update the video asset to reference the new thumbnail
+    await asset.update({ thumbnailPath: imageAsset.filePath });
+
+    res.json(withPublicUrls(asset, req));
+  } catch (error) {
+    console.error('Error updating thumbnail:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
