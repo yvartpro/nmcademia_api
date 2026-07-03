@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const { requireAuth } = require('../middleware/auth');
-const { uploadImage, uploadVideo, optimizeImage, optimizeVideo } = require('../middleware/upload');
+const { uploadImage, uploadVideo, hybridUpload, optimizeImage, optimizeVideo } = require('../middleware/upload');
 
 const LeadController = require('../controllers/LeadController');
 const CountryController = require('../controllers/CountryController');
@@ -96,7 +96,7 @@ router.post('/chat/sessions/:chatSessionId/close', ChatController.closeSession);
 router.get('/media', MediaController.getAllMedia);
 router.post('/media/image', uploadImage.single('file'), optimizeImage, MediaController.uploadImage);
 // Upload video with optional thumbnail (both saved in a DB transaction)
-router.post('/media/video-with-thumbnail', uploadVideo.single('file'), optimizeVideo, uploadImage.single('thumbnail'), optimizeImage, MediaController.uploadVideoWithThumbnail);
+router.post('/media/video-with-thumbnail', hybridUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }]), optimizeVideo, optimizeImage, MediaController.uploadVideoWithThumbnail);
 router.delete('/media/:id', MediaController.deleteMedia);
 
 // Presentations

@@ -94,6 +94,9 @@ exports.uploadVideoWithThumbnail = async (req, res) => {
       return res.status(400).json({ error: 'No video uploaded' });
     }
 
+    const videoFile = req.file || req.files?.file?.[0];
+    const thumbnailFile = req.files?.thumbnail?.[0];
+
     const t = await sequelize.transaction();
     try {
       let thumbnailPath = null;
@@ -103,7 +106,7 @@ exports.uploadVideoWithThumbnail = async (req, res) => {
         const { path: imgPath, mimeType, metadata } = req.optimizedImage;
         const imageAsset = await MediaAsset.create({
           type: 'image',
-          title: req.body.thumbnailTitle || req.body.title || req.file?.originalname || 'Thumbnail',
+          title: req.body.thumbnailTitle || req.body.title || thumbnailFile?.originalname || 'Thumbnail',
           description: req.body.thumbnailDescription || req.body.description,
           excerpt: req.body.excerpt,
           filePath: imgPath,
@@ -122,7 +125,7 @@ exports.uploadVideoWithThumbnail = async (req, res) => {
       const { path: filePath, mimeType, size } = req.optimizedVideo;
       const videoAsset = await MediaAsset.create({
         type: 'video',
-        title: req.body.title || req.file?.originalname || 'Video',
+        title: req.body.title || videoFile?.originalname || 'Video',
         description: req.body.description,
         excerpt: req.body.excerpt,
         filePath,

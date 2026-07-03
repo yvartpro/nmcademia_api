@@ -22,15 +22,56 @@ const imageUpload = multer({
   }
 });
 
-const videoUpload = multer({
-  storage: multer.diskStorage({
-    destination: (_req, _file, cb) => cb(null, videosDir),
-    filename: (_req, file, cb) => {
-      const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-      const ext = path.extname(file.originalname) || '.mp4';
-      cb(null, `${unique}${ext}`);
+const diskStorage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, videosDir),
+  filename: (_req, file, cb) => {
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname) || '.mp4';
+    cb(null, `${unique}${ext}`);
+  }
+});
+
+const memoryStorage = multer.memoryStorage();
+
+const hybridStorage = {
+  _handleFile: (req, file, cb) => {
+    if (file.fieldname === 'file') {
+      diskStorage._handleFile(req, file, cb);
+    } else if (file.fieldname === 'thumbnail') {
+      memoryStorage._handleFile(req, file, cb);
+    } else {
+      cb(new Error('Unexpected field in hybrid upload'));
     }
-  }),
+  },
+  _removeFile: (req, file, cb) => {
+    if (file.fieldname === 'file') {
+      diskStorage._removeFile(req, file, cb);
+    } else if (file.fieldname === 'thumbnail') {
+      memoryStorage._removeFile(req, file, cb);
+    } else {
+      cb(null);
+    }
+  }
+};
+
+const hybridUpload = multer({
+  storage: hybridStorage,
+  limits: { fileSize: 200 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.fieldname === 'file') {
+      if (file.mimetype.startsWith('video/')) cb(null, true);
+      else cb(new Error('Only video files are allowed for file field'));
+    } else if (file.fieldname === 'thumbnail') {
+      if (file.mimetype.startsWith('image/')) cb(null, true);
+      else cb(new Error('Only image files are allowed for thumbnail field'));
+    } else {
+      cb(new Error(`Unexpected field: ${file.fieldname}`));
+    }
+  }
+});
+
+const videoUpload = multer({
+  storage: diskStorage,
   limits: { fileSize: 200 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     if (file.mimetype.startsWith('video/')) cb(null, true);
@@ -40,7 +81,15 @@ const videoUpload = multer({
 
 /** Single compressed WebP in uploads/images/ */
 const optimizeImage = async (req, res, next) => {
-  if (!req.file) return next();
+  let file = req.file;
+  if (!file && req.files && req.files.thumbnail && req.files.thumbnail[0]) {
+    file = req.files.thumbnail[0];
+  }
+  if (!file) return next();
+
+  if (file.fieldname === 'thumbnail' && file.size > 15 * 1024 * 1024) {
+    return next(new Error('Thumbnail size exceeds limit of 15MB'));
+  }
 
   const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
   const filename = `image-${unique}.webp`;
@@ -48,10 +97,10 @@ const optimizeImage = async (req, res, next) => {
   const relativePath = path.posix.join('uploads', 'images', filename);
 
   try {
-    const pipeline = sharp(req.file.buffer).rotate();
+    const pipeline = sharp(file.buffer).rotate();
     const metadata = await pipeline.metadata();
 
-    await sharp(req.file.buffer)
+    await sharp(file.buffer)
       .rotate()
       .resize({
         width: 1920,
@@ -84,14 +133,18 @@ const optimizeImage = async (req, res, next) => {
 
 /** Video saved as-is in uploads/videos/ */
 const optimizeVideo = (req, res, next) => {
-  if (!req.file) return next();
+  let file = req.file;
+  if (!file && req.files && req.files.file && req.files.file[0]) {
+    file = req.files.file[0];
+  }
+  if (!file) return next();
 
-  const relativePath = path.posix.join('uploads', 'videos', req.file.filename);
+  const relativePath = path.posix.join('uploads', 'videos', file.filename);
 
   req.optimizedVideo = {
     path: relativePath,
-    mimeType: req.file.mimetype,
-    size: req.file.size
+    mimeType: file.mimetype,
+    size: file.size
   };
 
   next();
@@ -103,6 +156,7 @@ module.exports = {
   videosDir,
   uploadImage: imageUpload,
   uploadVideo: videoUpload,
+  hybridUpload,
   optimizeImage,
   optimizeVideo
 };
