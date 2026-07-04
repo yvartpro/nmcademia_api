@@ -12,10 +12,10 @@ async function seed() {
     // 1. Seed Countries
     console.log('Seeding Countries...');
     const countries = [
-      { name: 'Nigeria', code: 'NG', currency: 'NGN', currencySymbol: '₦', whatsappNumber: '+2348030001111' },
-      { name: 'Kenya', code: 'KE', currency: 'KES', currencySymbol: 'KSh', whatsappNumber: '+254711223344' },
-      { name: 'Burundi', code: 'BI', currency: 'BIF', currencySymbol: 'FBu', whatsappNumber: '+25779123456' },
-      { name: 'United States', code: 'US', currency: 'USD', currencySymbol: '$', whatsappNumber: '+12025550199' }
+      { name: 'Nigeria', code: 'NG', currency: 'NGN', currencySymbol: '₦', whatsappNumber: '+2348030001111', flagIcon: 'fi fi-ng' },
+      { name: 'Kenya', code: 'KE', currency: 'KES', currencySymbol: 'KSh', whatsappNumber: '+254711223344', flagIcon: 'fi fi-ke' },
+      { name: 'Burundi', code: 'BI', currency: 'BIF', currencySymbol: 'FBu', whatsappNumber: '+25779123456', flagIcon: 'fi fi-bi' },
+      { name: 'United States', code: 'US', currency: 'USD', currencySymbol: '$', whatsappNumber: '+12025550199', flagIcon: 'fi fi-us' }
     ];
     for (const c of countries) {
       await Country.create(c);

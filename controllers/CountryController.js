@@ -1,5 +1,31 @@
 const { Country } = require('../models');
 
+function normalizeFlagIcon(flagIcon, code) {
+  const raw = (flagIcon || '').trim().toLowerCase();
+  const iso = (code || '').trim().toLowerCase();
+
+  if (raw) {
+    const parts = raw.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2 && parts[0] === 'fi' && parts[1].startsWith('fi-')) {
+      return `fi ${parts[1]}`;
+    }
+    if (parts.length >= 2 && parts[1] === 'fi' && /^[a-z]{2}$/.test(parts[0])) {
+      return `fi fi-${parts[0]}`;
+    }
+    if (parts.length === 1 && parts[0].startsWith('fi-')) {
+      return `fi ${parts[0]}`;
+    }
+    if (parts.length === 1 && /^[a-z]{2}$/.test(parts[0])) {
+      return `fi fi-${parts[0]}`;
+    }
+  }
+
+  if (/^[a-z]{2}$/.test(iso)) {
+    return `fi fi-${iso}`;
+  }
+  return null;
+}
+
 exports.getAllCountries = async (req, res) => {
   try {
     const countries = await Country.findAll({
@@ -27,7 +53,7 @@ exports.adminGetAllCountries = async (req, res) => {
 
 exports.createCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, status } = req.body;
+    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status } = req.body;
     if (!name || !code || !currency || !currencySymbol) {
       return res.status(400).json({ message: 'Name, code, currency and currency symbol are required' });
     }
@@ -38,6 +64,7 @@ exports.createCountry = async (req, res) => {
       currency,
       currencySymbol,
       whatsappNumber,
+      flagIcon: normalizeFlagIcon(flagIcon, code) || `fi fi-${code.toLowerCase()}`,
       status: status !== undefined ? status : true
     });
 
@@ -50,7 +77,7 @@ exports.createCountry = async (req, res) => {
 
 exports.updateCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, status } = req.body;
+    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status } = req.body;
     const country = await Country.findByPk(req.params.id);
     if (!country) return res.status(404).json({ message: 'Country not found' });
 
@@ -60,6 +87,9 @@ exports.updateCountry = async (req, res) => {
       currency,
       currencySymbol,
       whatsappNumber,
+      flagIcon: flagIcon !== undefined
+        ? (normalizeFlagIcon(flagIcon, code || country.code) || country.flagIcon)
+        : country.flagIcon,
       status: status !== undefined ? status : country.status
     });
 

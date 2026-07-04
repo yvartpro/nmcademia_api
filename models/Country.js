@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true
     },
+    flagIcon: {
+      type: DataTypes.STRING(32),
+      allowNull: true,
+      comment: 'flag-icons class string e.g. fi fi-ng'
+    },
     status: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
