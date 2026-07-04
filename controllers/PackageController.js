@@ -74,10 +74,13 @@ exports.createPackage = async (req, res) => {
     }
 
     const completedPkg = await Package.findByPk(pkg.id, {
-      include: [{ model: PackagePrice, as: 'prices' }]
+      include: [
+        { model: PackagePrice, as: 'prices' },
+        { model: MediaAsset, as: 'image' }
+      ]
     });
 
-    res.status(201).json(completedPkg);
+    res.status(201).json(withMediaPaths(completedPkg));
   } catch (error) {
     console.error('Create package error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -114,10 +117,13 @@ exports.updatePackage = async (req, res) => {
     }
 
     const completedPkg = await Package.findByPk(pkg.id, {
-      include: [{ model: PackagePrice, as: 'prices' }]
+      include: [
+        { model: PackagePrice, as: 'prices' },
+        { model: MediaAsset, as: 'image' }
+      ]
     });
 
-    res.json(completedPkg);
+    res.json(withMediaPaths(completedPkg));
   } catch (error) {
     console.error('Update package error:', error);
     res.status(500).json({ message: 'Internal server error' });

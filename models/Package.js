@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
     featured: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    mediaAssetId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: { model: 'nma_mediaassets', key: 'id' }
     }
   }, {
     tableName: 'nma_packages',
