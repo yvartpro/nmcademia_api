@@ -5,7 +5,10 @@ exports.getAllTestimonials = async (req, res) => {
   try {
     const testimonials = await Testimonial.findAll({
       where: { active: true },
-      include: [{ model: MediaAsset, as: 'photo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }],
+      include: [
+        { model: MediaAsset, as: 'photo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] },
+        { model: MediaAsset, as: 'video', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }
+      ],
       order: [['order', 'ASC']]
     });
     res.json(testimonials);
@@ -18,8 +21,9 @@ exports.getAllTestimonials = async (req, res) => {
 // POST /admin/testimonials
 exports.createTestimonial = async (req, res) => {
   try {
-    const { name, quote, lifestyleTag, order, mediaAssetId, active } = req.body;
-    const testimonial = await Testimonial.create({ name, quote, lifestyleTag, order, mediaAssetId, active });
+    const { name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, active } = req.body;
+    const hasVideo = !!videoAssetId;
+    const testimonial = await Testimonial.create({ name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, hasVideo, active });
     res.status(201).json(testimonial);
   } catch (err) {
     console.error('createTestimonial error:', err);
@@ -31,10 +35,11 @@ exports.createTestimonial = async (req, res) => {
 exports.updateTestimonial = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, quote, lifestyleTag, order, mediaAssetId, active } = req.body;
+    const { name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, active } = req.body;
     const testimonial = await Testimonial.findByPk(id);
     if (!testimonial) return res.status(404).json({ message: 'Testimonial not found' });
-    await testimonial.update({ name, quote, lifestyleTag, order, mediaAssetId, active });
+    const hasVideo = !!videoAssetId;
+    await testimonial.update({ name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, hasVideo, active });
     res.json(testimonial);
   } catch (err) {
     console.error('updateTestimonial error:', err);

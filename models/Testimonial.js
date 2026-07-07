@@ -20,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: true
     },
+    videoAssetId: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    hasVideo: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     active: {
       type: DataTypes.BOOLEAN,
       defaultValue: true

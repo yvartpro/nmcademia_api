@@ -48,6 +48,9 @@ db.Testimonial.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'photo
 db.Founder.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'photo' });
 db.ManufacturingPartner.belongsTo(db.MediaAsset, { foreignKey: 'mediaAssetId', as: 'logo' });
 
+// Optional testimonial video
+db.Testimonial.belongsTo(db.MediaAsset, { foreignKey: 'videoAssetId', as: 'video' });
+
 // EarningStream media (optional image/video)
 db.EarningStream.belongsTo(db.MediaAsset, { foreignKey: 'mediaId', as: 'media' });
 
