@@ -24,7 +24,13 @@ exports.createTestimonial = async (req, res) => {
     const { name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, active } = req.body;
     const hasVideo = !!videoAssetId;
     const testimonial = await Testimonial.create({ name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, hasVideo, active });
-    res.status(201).json(testimonial);
+    const populated = await Testimonial.findByPk(testimonial.id, {
+      include: [
+        { model: MediaAsset, as: 'photo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] },
+        { model: MediaAsset, as: 'video', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }
+      ]
+    });
+    res.status(201).json(populated);
   } catch (err) {
     console.error('createTestimonial error:', err);
     res.status(500).json({ message: 'Failed to create testimonial' });
@@ -40,7 +46,13 @@ exports.updateTestimonial = async (req, res) => {
     if (!testimonial) return res.status(404).json({ message: 'Testimonial not found' });
     const hasVideo = !!videoAssetId;
     await testimonial.update({ name, quote, lifestyleTag, order, mediaAssetId, videoAssetId, hasVideo, active });
-    res.json(testimonial);
+    const populated = await Testimonial.findByPk(id, {
+      include: [
+        { model: MediaAsset, as: 'photo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] },
+        { model: MediaAsset, as: 'video', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }
+      ]
+    });
+    res.json(populated);
   } catch (err) {
     console.error('updateTestimonial error:', err);
     res.status(500).json({ message: 'Failed to update testimonial' });
