@@ -3,6 +3,7 @@ const path = require('path');
 const { MediaAsset } = require('../models');
 const { uploadRoot } = require('../middleware/upload');
 const { toWebPath, toPublicUrl } = require('../utils/paths');
+const { transcodeVideoToHls } = require('../services/videoHlsService');
 
 const diskPathFromRelative = (relativePath) => {
   if (!relativePath) return null;
@@ -81,6 +82,42 @@ exports.uploadVideo = async (req, res) => {
     res.status(201).json(withPublicUrls(asset, req));
   } catch (error) {
     console.error('Error creating video asset:', error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+exports.uploadVideoHls = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No video uploaded' });
+    }
+
+    const encoded = await transcodeVideoToHls({
+      sourcePath: req.file.path,
+      originalname: req.file.originalname,
+      title: req.body.title || req.file.originalname || 'Video',
+      description: req.body.description,
+      excerpt: req.body.excerpt,
+      mimeType: req.file.mimetype,
+      size: req.file.size
+    });
+
+    const asset = await MediaAsset.create({
+      type: 'video',
+      title: encoded.title,
+      description: encoded.description,
+      excerpt: encoded.excerpt,
+      filePath: encoded.playlistPath,
+      thumbnailPath: null,
+      mimeType: encoded.mimeType,
+      fileSize: encoded.size,
+      duration: encoded.duration,
+      versions: encoded.versions
+    });
+
+    res.status(201).json(withPublicUrls(asset, req));
+  } catch (error) {
+    console.error('Error creating HLS video asset:', error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -95,6 +95,7 @@ router.post('/chat/sessions/:chatSessionId/close', ChatController.closeSession);
 // Media
 router.get('/media', MediaController.getAllMedia);
 router.post('/media/image', uploadImage.single('file'), optimizeImage, MediaController.uploadImage);
+router.post('/media/hls-upload', uploadVideo.single('file'), MediaController.uploadVideoHls);
 // Upload video with optional thumbnail (both saved in a DB transaction)
 router.post('/media/video-with-thumbnail', hybridUpload.fields([{ name: 'file', maxCount: 1 }, { name: 'thumbnail', maxCount: 1 }]), optimizeVideo, optimizeImage, MediaController.uploadVideoWithThumbnail);
 router.patch('/media/:id/thumbnail', uploadImage.single('thumbnail'), optimizeImage, MediaController.updateThumbnail);
