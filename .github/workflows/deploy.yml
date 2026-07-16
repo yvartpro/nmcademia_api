@@ -28,7 +28,7 @@ jobs:
 
             cd /home/yves/apps/nma
 
-            git pull origin main
+            git pull origin deploy
 
             npm install
 
