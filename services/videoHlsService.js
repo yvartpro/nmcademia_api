@@ -1,20 +1,29 @@
 const fs = require('fs');
 const path = require('path');
+const { spawn } = require('child_process');
 const ffmpeg = require('fluent-ffmpeg');
-const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+let ffmpegPath = '/usr/bin/ffmpeg';
+let ffprobePath = '/usr/bin/ffprobe';
 
-let ffprobePath = null;
-try {
-  ffprobePath = require('@ffprobe-installer/ffprobe').path;
-} catch (error) {
-  const fallback = ffmpegPath.replace(/ffmpeg$/, 'ffprobe');
-  if (fs.existsSync(fallback)) {
-    ffprobePath = fallback;
+if (!fs.existsSync(ffmpegPath)) {
+  try {
+    ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
+  } catch (err) {
+    ffmpegPath = 'ffmpeg';
   }
 }
 
-if (!ffprobePath) {
-  throw new Error('FFprobe binary could not be located. Install @ffprobe-installer/ffprobe or ensure ffprobe is available on PATH.');
+if (!fs.existsSync(ffprobePath)) {
+  try {
+    ffprobePath = require('@ffprobe-installer/ffprobe').path;
+  } catch (error) {
+    const fallback = ffmpegPath.replace(/ffmpeg$/, 'ffprobe');
+    if (fs.existsSync(fallback)) {
+      ffprobePath = fallback;
+    } else {
+      ffprobePath = 'ffprobe';
+    }
+  }
 }
 
 ffmpeg.setFfmpegPath(ffmpegPath);
@@ -101,13 +110,14 @@ async function transcodeVideoToHls({ sourcePath, originalname, title, descriptio
     const outputOptions = [
       '-filter_complex', filterComplex,
       // --- 360p stream (index 0) ---
+      // Force yuv420p so libx264 works with any source pixel format (yuv444p, etc.)
       '-map', '[v360out]',
-      '-c:v:0', 'libx264', '-profile:v:0', 'main', '-crf:v:0', '23',
-      '-b:v:0', '400k', '-maxrate:v:0', '450k', '-bufsize:v:0', '600k',
+      '-c:v:0', 'libx264', '-pix_fmt:v:0', 'yuv420p', '-preset:v:0', 'fast',
+      '-crf:v:0', '23', '-b:v:0', '400k', '-maxrate:v:0', '450k', '-bufsize:v:0', '600k',
       // --- 720p stream (index 1) ---
       '-map', '[v720out]',
-      '-c:v:1', 'libx264', '-profile:v:1', 'main', '-crf:v:1', '23',
-      '-b:v:1', '1500k', '-maxrate:v:1', '1600k', '-bufsize:v:1', '2200k',
+      '-c:v:1', 'libx264', '-pix_fmt:v:1', 'yuv420p', '-preset:v:1', 'fast',
+      '-crf:v:1', '23', '-b:v:1', '1500k', '-maxrate:v:1', '1600k', '-bufsize:v:1', '2200k',
     ];
 
     // Audio mapping per stream
@@ -130,13 +140,32 @@ async function transcodeVideoToHls({ sourcePath, originalname, title, descriptio
       '-var_stream_map', hasAudio ? 'v:0,a:0 v:1,a:1' : 'v:0 v:1',
     );
 
-    ffmpeg(sourcePath)
-      .inputOptions(['-threads', '2'])
-      .outputOptions(outputOptions)
-      .output(path.join(outputDir, 'stream_%v.m3u8'))
-      .on('end', () => resolve())
-      .on('error', (err) => reject(err))
-      .run();
+    const args = [
+      '-threads', '2',
+      '-i', sourcePath,
+      '-y',
+      ...outputOptions,
+      path.join(outputDir, 'stream_%v.m3u8')
+    ];
+
+    const child = spawn(ffmpegPath, args);
+    let stderrData = '';
+
+    child.stderr.on('data', (data) => {
+      stderrData += data.toString();
+    });
+
+    child.on('close', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`ffmpeg exited with code ${code}. Stderr: ${stderrData}`));
+      }
+    });
+
+    child.on('error', (err) => {
+      reject(err);
+    });
   });
 
   if (!fs.existsSync(playlistPath)) {
