@@ -3,7 +3,7 @@ const path = require('path');
 const { MediaAsset } = require('../models');
 const { uploadRoot } = require('../middleware/upload');
 const { toWebPath, toPublicUrl } = require('../utils/paths');
-const { transcodeVideoToHls } = require('../services/videoHlsService');
+const { enqueue: enqueueTranscode, getStatus: getQueueStatus } = require('../services/videoQueue');
 
 const diskPathFromRelative = (relativePath) => {
   if (!relativePath) return null;
@@ -107,69 +107,91 @@ exports.uploadVideoHls = async (req, res) => {
       return res.status(400).json({ error: 'No video uploaded' });
     }
 
-    const encoded = await transcodeVideoToHls({
+    // --- Step 1: Save the thumbnail image immediately (fast, no ffmpeg needed) ---
+    let thumbnailPath = null;
+    if (req.optimizedImage) {
+      const { path: imgPath, mimeType: imgMimeType, metadata } = req.optimizedImage;
+      const imageAsset = await MediaAsset.create({
+        type: 'image',
+        title: req.body.thumbnailTitle || req.body.title || 'Thumbnail',
+        description: req.body.thumbnailDescription || req.body.description,
+        excerpt: req.body.excerpt,
+        filePath: imgPath,
+        thumbnailPath: null,
+        mimeType: imgMimeType,
+        fileSize: metadata.size,
+        width: metadata.width,
+        height: metadata.height,
+        versions: null,
+        processingStatus: 'ready'
+      });
+      thumbnailPath = imageAsset.filePath;
+    }
+
+    // --- Step 2: Immediately create the video DB record with processingStatus='pending' ---
+    // We use a temporary placeholder for filePath (the real m3u8 path will be updated after transcoding)
+    const title = req.body.title || videoFile.originalname || 'Video';
+    const asset = await MediaAsset.create({
+      type: 'video',
+      title,
+      description: req.body.description,
+      excerpt: req.body.excerpt,
+      filePath: `uploads/videos/pending_${Date.now()}.mp4`, // placeholder, updated after transcode
+      thumbnailPath,
+      mimeType: videoFile.mimetype,
+      fileSize: videoFile.size,
+      duration: null,
+      versions: null,
+      processingStatus: 'pending'
+    });
+
+    // --- Step 3: Immediately respond to the browser — no more 504 timeouts! ---
+    res.status(202).json({
+      ...withPublicUrls(asset, req),
+      processingStatus: 'pending',
+      message: 'Upload received. Video is being processed in the background.'
+    });
+
+    // --- Step 4: Push the heavy ffmpeg work to the background queue ---
+    enqueueTranscode({
+      assetId: asset.id,
       sourcePath: videoFile.path,
       originalname: videoFile.originalname,
-      title: req.body.title || videoFile.originalname || 'Video',
+      title,
       description: req.body.description,
       excerpt: req.body.excerpt,
       mimeType: videoFile.mimetype,
       size: videoFile.size
     });
 
-    const t = await sequelize.transaction();
-    try {
-      let thumbnailPath = null;
-
-      if (req.optimizedImage) {
-        const { path: imgPath, mimeType, metadata } = req.optimizedImage;
-        const imageAsset = await MediaAsset.create({
-          type: 'image',
-          title: req.body.thumbnailTitle || req.body.title || 'Thumbnail',
-          description: req.body.thumbnailDescription || req.body.description,
-          excerpt: req.body.excerpt,
-          filePath: imgPath,
-          thumbnailPath: null,
-          mimeType,
-          fileSize: metadata.size,
-          width: metadata.width,
-          height: metadata.height,
-          versions: null
-        }, { transaction: t });
-
-        thumbnailPath = imageAsset.filePath;
-      }
-
-      const asset = await MediaAsset.create({
-        type: 'video',
-        title: encoded.title,
-        description: encoded.description,
-        excerpt: encoded.excerpt,
-        filePath: encoded.playlistPath,
-        thumbnailPath,
-        mimeType: encoded.mimeType,
-        fileSize: encoded.size,
-        duration: encoded.duration,
-        versions: encoded.versions
-      }, { transaction: t });
-
-      await t.commit();
-
-      const payload = withPublicUrls(asset, req);
-      payload.status = encoded.status || 'ready';
-      payload.streamType = encoded.streamType || 'hls';
-      payload.streamingMode = encoded.streamingMode || 'adaptive';
-      payload.playlistUrl = encoded.playlistPath;
-      payload.manifestUrl = encoded.manifestUrl || encoded.playlistPath;
-      payload.versions = { ...(payload.versions || {}), stream: encoded.versions?.stream || null };
-
-      res.status(201).json(payload);
-    } catch (err) {
-      await t.rollback();
-      throw err;
-    }
   } catch (error) {
     console.error('Error creating HLS video asset:', error);
+    // Only send response if headers haven't been sent yet
+    if (!res.headersSent) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+// Poll the processing status of a specific media asset
+exports.getMediaStatus = async (req, res) => {
+  try {
+    const asset = await MediaAsset.findByPk(req.params.id);
+    if (!asset) return res.status(404).json({ error: 'Media not found' });
+
+    const data = withPublicUrls(asset, req);
+    return res.json({
+      id: asset.id,
+      processingStatus: asset.processingStatus,
+      processingError: asset.processingError || null,
+      filePath: data.filePath,
+      publicUrl: data.publicUrl,
+      thumbnailPath: data.thumbnailPath,
+      duration: asset.duration,
+      versions: asset.versions,
+      queue: getQueueStatus()
+    });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };

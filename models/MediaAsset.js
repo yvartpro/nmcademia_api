@@ -20,7 +20,12 @@ module.exports = (sequelize, DataTypes) => {
     width: DataTypes.INTEGER,
     height: DataTypes.INTEGER,
     duration: DataTypes.INTEGER,
-    versions: DataTypes.JSON
+    versions: DataTypes.JSON,
+    processingStatus: {
+      type: DataTypes.ENUM('pending', 'processing', 'ready', 'error'),
+      defaultValue: 'ready'
+    },
+    processingError: DataTypes.TEXT
   }, {
     tableName: 'nma_mediaassets',
     paranoid: true,
