@@ -32,7 +32,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // ✅ Static files
 const uploadsRoot = process.env.UPLOADS_DIR || path.join(__dirname, 'uploads');
-app.use('/uploads', express.static(uploadsRoot));
+app.use('/uploads', express.static(uploadsRoot, {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.m3u8')) {
+      res.setHeader('Content-Type', 'application/vnd.apple.mpegurl');
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (filePath.endsWith('.ts')) {
+      res.setHeader('Content-Type', 'video/mp2t');
+    }
+  }
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ✅ API routes
@@ -46,7 +55,8 @@ app.get('/api', (req, res) => {
 });
 
 // ✅ SPA fallback (VERY IMPORTANT for Vue router histories)
-app.get(/.*/, (req, res) => {
+// Exclude /uploads/ paths so static HLS files (.m3u8, .ts) are never intercepted
+app.get(/^(?!\/uploads\/).*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

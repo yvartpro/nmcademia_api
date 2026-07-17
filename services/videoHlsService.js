@@ -2,7 +2,20 @@ const fs = require('fs');
 const path = require('path');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('@ffmpeg-installer/ffmpeg').path;
-const ffprobePath = require('@ffmpeg-installer/ffmpeg').path.replace(/ffmpeg$/, 'ffprobe');
+
+let ffprobePath = null;
+try {
+  ffprobePath = require('@ffprobe-installer/ffprobe').path;
+} catch (error) {
+  const fallback = ffmpegPath.replace(/ffmpeg$/, 'ffprobe');
+  if (fs.existsSync(fallback)) {
+    ffprobePath = fallback;
+  }
+}
+
+if (!ffprobePath) {
+  throw new Error('FFprobe binary could not be located. Install @ffprobe-installer/ffprobe or ensure ffprobe is available on PATH.');
+}
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 ffmpeg.setFfprobePath(ffprobePath);
@@ -15,8 +28,8 @@ if (!fs.existsSync(videosRoot)) {
 }
 
 function toRelativeUploadPath(absolutePath) {
-  const relative = path.relative(uploadRoot, absolutePath);
-  return relative.split(path.sep).join('/');
+  const relative = path.relative(uploadRoot, absolutePath).split(path.sep).join('/');
+  return path.posix.join('uploads', relative);
 }
 
 function ensureDirectory(dirPath) {
@@ -70,24 +83,55 @@ async function transcodeVideoToHls({ sourcePath, originalname, title, descriptio
         '360': `uploads/videos/${videoId}/stream_0.m3u8`,
         '720': `uploads/videos/${videoId}/stream_1.m3u8`
       }
+    },
+    stream: {
+      status: 'ready',
+      streamType: 'hls',
+      streamingMode: 'adaptive',
+      segmentDuration: 4,
+      qualityLevels: ['360', '720'],
+      manifestUrl: `uploads/videos/${videoId}/master.m3u8`
     }
   };
 
   await new Promise((resolve, reject) => {
-    const baseOptions = ['-filter_complex', '[0:v]split=2[v360][v720];[v360]scale=w=640:h=360[v360out];[v720]scale=w=1280:h=720[v720out]'];
-    const v360Options = ['-map', '[v360out]', '-c:v:0', 'libx264', '-b:v:0', '400k', '-maxrate:v:0', '450k', '-bufsize:v:0', '600k'];
-    const v720Options = ['-map', '[v720out]', '-c:v:1', 'libx264', '-b:v:1', '1500k', '-maxrate:v:1', '1600k', '-bufsize:v:1', '2200k'];
+    // Build filter_complex to split input into two scaled outputs
+    const filterComplex = '[0:v]split=2[v360][v720];[v360]scale=w=640:h=360:force_original_aspect_ratio=decrease,pad=640:360:(ow-iw)/2:(oh-ih)/2[v360out];[v720]scale=w=1280:h=720:force_original_aspect_ratio=decrease,pad=1280:720:(ow-iw)/2:(oh-ih)/2[v720out]';
 
+    const outputOptions = [
+      '-filter_complex', filterComplex,
+      // --- 360p stream (index 0) ---
+      '-map', '[v360out]',
+      '-c:v:0', 'libx264', '-profile:v:0', 'main', '-crf:v:0', '23',
+      '-b:v:0', '400k', '-maxrate:v:0', '450k', '-bufsize:v:0', '600k',
+      // --- 720p stream (index 1) ---
+      '-map', '[v720out]',
+      '-c:v:1', 'libx264', '-profile:v:1', 'main', '-crf:v:1', '23',
+      '-b:v:1', '1500k', '-maxrate:v:1', '1600k', '-bufsize:v:1', '2200k',
+    ];
+
+    // Audio mapping per stream
     if (hasAudio) {
-      v360Options.push('-map', 'a:0', '-c:a:0', 'aac', '-b:a:0', '96k');
-      v720Options.push('-map', 'a:0', '-c:a:1', 'aac', '-b:a:1', '128k');
+      outputOptions.push(
+        '-map', 'a:0', '-c:a:0', 'aac', '-b:a:0', '96k',
+        '-map', 'a:0', '-c:a:1', 'aac', '-b:a:1', '128k',
+      );
     }
 
-    const hlsOptions = ['-f', 'hls', '-hls_time', '4', '-hls_playlist_type', 'vod', '-master_pl_name', 'master.m3u8', '-hls_segment_filename', path.join(outputDir, 'stream_%v_%03d.ts')];
-    const outputOptions = baseOptions.concat(v360Options, v720Options, hlsOptions);
+    // HLS muxer options
+    outputOptions.push(
+      '-f', 'hls',
+      '-hls_time', '4',
+      '-hls_playlist_type', 'vod',
+      '-hls_flags', 'independent_segments',
+      '-master_pl_name', 'master.m3u8',
+      '-hls_segment_filename', path.join(outputDir, 'stream_%v_%03d.ts'),
+      // Map stream 0 → v:0 a:0, stream 1 → v:1 a:1
+      '-var_stream_map', hasAudio ? 'v:0,a:0 v:1,a:1' : 'v:0 v:1',
+    );
 
     ffmpeg(sourcePath)
-      .inputOptions('-threads 1')
+      .inputOptions(['-threads', '2'])
       .outputOptions(outputOptions)
       .output(path.join(outputDir, 'stream_%v.m3u8'))
       .on('end', () => resolve())
@@ -113,7 +157,11 @@ async function transcodeVideoToHls({ sourcePath, originalname, title, descriptio
     mimeType: mimeType || 'application/vnd.apple.mpegurl',
     size,
     duration,
+    status: 'ready',
+    streamType: 'hls',
+    streamingMode: 'adaptive',
     playlistPath: relativePlaylistPath,
+    manifestUrl: relativePlaylistPath,
     versions
   };
 }

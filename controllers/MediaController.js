@@ -11,10 +11,20 @@ const diskPathFromRelative = (relativePath) => {
   return path.join(uploadRoot, rel);
 };
 
+const normalizeStoredPath = (relativePath) => {
+  if (!relativePath) return relativePath;
+  const normalized = String(relativePath).replace(/^\/+/, '');
+  if (normalized.startsWith('uploads/')) return normalized;
+  if (normalized.startsWith('videos/') || normalized.startsWith('images/')) {
+    return `uploads/${normalized}`;
+  }
+  return normalized;
+};
+
 const withPublicUrls = (asset, req) => {
   const data = asset.toJSON ? asset.toJSON() : { ...asset };
   const basePath = process.env.PUBLIC_BASE_PATH || '';
-  const rawPath = data.filePath;
+  const rawPath = normalizeStoredPath(data.filePath);
   data.filePath = toWebPath(rawPath, basePath);
 
   let originOverride = null;
@@ -25,7 +35,9 @@ const withPublicUrls = (asset, req) => {
   }
 
   data.publicUrl = toPublicUrl(rawPath, basePath, originOverride);
-  data.thumbnailPath = data.thumbnailPath ? toWebPath(data.thumbnailPath, basePath) : null;
+  data.thumbnailPath = data.thumbnailPath
+    ? toWebPath(normalizeStoredPath(data.thumbnailPath), basePath)
+    : null;
   data.versions = data.versions || null;
   return data;
 };
@@ -87,35 +99,75 @@ exports.uploadVideo = async (req, res) => {
 };
 
 exports.uploadVideoHls = async (req, res) => {
+  const { sequelize } = require('../models');
+
   try {
-    if (!req.file) {
+    const videoFile = req.file || req.files?.file?.[0];
+    if (!videoFile) {
       return res.status(400).json({ error: 'No video uploaded' });
     }
 
     const encoded = await transcodeVideoToHls({
-      sourcePath: req.file.path,
-      originalname: req.file.originalname,
-      title: req.body.title || req.file.originalname || 'Video',
+      sourcePath: videoFile.path,
+      originalname: videoFile.originalname,
+      title: req.body.title || videoFile.originalname || 'Video',
       description: req.body.description,
       excerpt: req.body.excerpt,
-      mimeType: req.file.mimetype,
-      size: req.file.size
+      mimeType: videoFile.mimetype,
+      size: videoFile.size
     });
 
-    const asset = await MediaAsset.create({
-      type: 'video',
-      title: encoded.title,
-      description: encoded.description,
-      excerpt: encoded.excerpt,
-      filePath: encoded.playlistPath,
-      thumbnailPath: null,
-      mimeType: encoded.mimeType,
-      fileSize: encoded.size,
-      duration: encoded.duration,
-      versions: encoded.versions
-    });
+    const t = await sequelize.transaction();
+    try {
+      let thumbnailPath = null;
 
-    res.status(201).json(withPublicUrls(asset, req));
+      if (req.optimizedImage) {
+        const { path: imgPath, mimeType, metadata } = req.optimizedImage;
+        const imageAsset = await MediaAsset.create({
+          type: 'image',
+          title: req.body.thumbnailTitle || req.body.title || 'Thumbnail',
+          description: req.body.thumbnailDescription || req.body.description,
+          excerpt: req.body.excerpt,
+          filePath: imgPath,
+          thumbnailPath: null,
+          mimeType,
+          fileSize: metadata.size,
+          width: metadata.width,
+          height: metadata.height,
+          versions: null
+        }, { transaction: t });
+
+        thumbnailPath = imageAsset.filePath;
+      }
+
+      const asset = await MediaAsset.create({
+        type: 'video',
+        title: encoded.title,
+        description: encoded.description,
+        excerpt: encoded.excerpt,
+        filePath: encoded.playlistPath,
+        thumbnailPath,
+        mimeType: encoded.mimeType,
+        fileSize: encoded.size,
+        duration: encoded.duration,
+        versions: encoded.versions
+      }, { transaction: t });
+
+      await t.commit();
+
+      const payload = withPublicUrls(asset, req);
+      payload.status = encoded.status || 'ready';
+      payload.streamType = encoded.streamType || 'hls';
+      payload.streamingMode = encoded.streamingMode || 'adaptive';
+      payload.playlistUrl = encoded.playlistPath;
+      payload.manifestUrl = encoded.manifestUrl || encoded.playlistPath;
+      payload.versions = { ...(payload.versions || {}), stream: encoded.versions?.stream || null };
+
+      res.status(201).json(payload);
+    } catch (err) {
+      await t.rollback();
+      throw err;
+    }
   } catch (error) {
     console.error('Error creating HLS video asset:', error);
     res.status(500).json({ error: error.message });
@@ -218,7 +270,12 @@ exports.deleteMedia = async (req, res) => {
 
     const diskPath = diskPathFromRelative(asset.filePath);
     if (diskPath && fs.existsSync(diskPath)) {
-      fs.unlinkSync(diskPath);
+      if (diskPath.endsWith('.m3u8')) {
+        const hlsDir = path.dirname(diskPath);
+        fs.rmSync(hlsDir, { recursive: true, force: true });
+      } else {
+        fs.unlinkSync(diskPath);
+      }
     }
 
     // Also delete the thumbnail image file and its DB record if it exists
