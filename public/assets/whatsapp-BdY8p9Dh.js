@@ -1,0 +1,1 @@
+var e=(e,t)=>{let n=t===`new-to-mlm`?e.settings?.whatsapp_new_to_mlm_group_link:e.settings?.whatsapp_mentorship_group_link;n?window.open(n,`_blank`):console.error(`No WhatsApp group link found in stores.`)};export{e as t};
