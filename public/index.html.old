@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#09090B">
+    <meta name="description" content="Network Marketing Academia — Build, lead, and create income through human networks.">
+    <title>Network Marketing Academia</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="/assets/index-C1DXZSRx.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-lhHHWwHU.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-socket-CJ-Fq7uU.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-ui-AJOhqWAj.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-axios-CN6Tf-y4.js">
+    <link rel="modulepreload" crossorigin href="/assets/vendor-vue-CjHO7K7S.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-B7R6tfMO.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
