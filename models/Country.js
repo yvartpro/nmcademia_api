@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
       type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    hasOffice: {
+      type: DataTypes.BOOLEAN,
       defaultValue: true
     }
   }, {

@@ -53,7 +53,7 @@ exports.adminGetAllCountries = async (req, res) => {
 
 exports.createCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status } = req.body;
+    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
     if (!name || !code || !currency || !currencySymbol) {
       return res.status(400).json({ message: 'Name, code, currency and currency symbol are required' });
     }
@@ -65,7 +65,8 @@ exports.createCountry = async (req, res) => {
       currencySymbol,
       whatsappNumber,
       flagIcon: normalizeFlagIcon(flagIcon, code) || `fi fi-${code.toLowerCase()}`,
-      status: status !== undefined ? status : true
+      status: status !== undefined ? status : true,
+      hasOffice: hasOffice !== undefined ? hasOffice : true
     });
 
     res.status(201).json(country);
@@ -77,7 +78,7 @@ exports.createCountry = async (req, res) => {
 
 exports.updateCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status } = req.body;
+    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
     const country = await Country.findByPk(req.params.id);
     if (!country) return res.status(404).json({ message: 'Country not found' });
 
@@ -90,7 +91,8 @@ exports.updateCountry = async (req, res) => {
       flagIcon: flagIcon !== undefined
         ? (normalizeFlagIcon(flagIcon, code || country.code) || country.flagIcon)
         : country.flagIcon,
-      status: status !== undefined ? status : country.status
+      status: status !== undefined ? status : country.status,
+      hasOffice: hasOffice !== undefined ? hasOffice : country.hasOffice
     });
 
     res.json(country);
