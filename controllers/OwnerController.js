@@ -8,11 +8,15 @@ exports.getPublicProfile = async (req, res) => {
       return res.status(404).json({ message: 'Owner not found' });
     }
 
+    const whatsappGroupLink = owner.whatsappGroupLink || owner.whatsapp_group_link || null;
+
     res.json({
       name: owner.name,
       bio: owner.bio,
       intro: owner.intro || null,
       whatsappNumber: owner.whatsappNumber,
+      whatsappGroupLink,
+      whatsapp_group_link: whatsappGroupLink,
       domainName: owner.domainName,
       photo: owner.photo || null
     });
@@ -45,7 +49,16 @@ exports.getAdminProfile = async (req, res) => {
 // Update profile by logged-in admin
 exports.updateProfile = async (req, res) => {
   try {
-    const { name, bio, intro, whatsappNumber, domainName, photoId } = req.body;
+    const {
+      name,
+      bio,
+      intro,
+      whatsappNumber,
+      whatsappGroupLink,
+      whatsapp_group_link,
+      domainName,
+      photoId
+    } = req.body;
     
     const owner = await Owner.findByPk(req.user.ownerId);
     if (!owner) {
@@ -60,11 +73,14 @@ exports.updateProfile = async (req, res) => {
       }
     }
 
+    const nextWhatsappGroupLink = whatsappGroupLink ?? whatsapp_group_link ?? owner.whatsappGroupLink;
+
     await owner.update({
       name,
       bio,
       intro,
       whatsappNumber,
+      whatsappGroupLink: nextWhatsappGroupLink,
       domainName,
       photoId
     });

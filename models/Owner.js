@@ -35,6 +35,11 @@ module.exports = (sequelize, DataTypes) => {
     whatsappNumber: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    whatsappGroupLink: {
+      type: DataTypes.STRING,
+      allowNull: true,
+      field: 'whatsapp_group_link'
     }
   }, {
     tableName: 'nma_owners',
