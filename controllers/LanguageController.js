@@ -28,7 +28,14 @@ exports.createLanguage = async (req, res) => {
 
     // Prevent duplicate codes for the same owner (or global)
     const ownerId = req.user?.ownerId || null;
-    const existing = await Language.findOne({ where: { code, ownerId } });
+    let existing = null;
+    try {
+      existing = await Language.findOne({ where: { code, ownerId } });
+    } catch (lookupErr) {
+      console.error('Language lookup failed:', lookupErr);
+      return res.status(500).json({ message: 'Failed to validate language uniqueness', error: lookupErr.message });
+    }
+
     if (existing) {
       return res.status(409).json({ message: 'Language code already exists for this owner', code });
     }
