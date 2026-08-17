@@ -16,6 +16,8 @@ db.FAQ = require('./FAQ')(sequelize, DataTypes);
 db.ChatSession = require('./ChatSession')(sequelize, DataTypes);
 db.ChatMessage = require('./ChatMessage')(sequelize, DataTypes);
 db.Setting = require('./Setting')(sequelize, DataTypes);
+db.Language = require('./Language')(sequelize, DataTypes);
+db.Translation = require('./Translation')(sequelize, DataTypes);
 
 // New content models
 db.Testimonial = require('./Testimonial')(sequelize, DataTypes);
@@ -78,6 +80,13 @@ db.Lead.belongsTo(db.Owner, { foreignKey: 'ownerId' });
 
 db.Owner.hasMany(db.ChatSession, { foreignKey: 'ownerId', as: 'chatSessions', onDelete: 'CASCADE' });
 db.ChatSession.belongsTo(db.Owner, { foreignKey: 'ownerId' });
+
+// Languages and translations
+db.Owner.hasMany(db.Language, { foreignKey: 'ownerId', as: 'languages', onDelete: 'CASCADE' });
+db.Language.belongsTo(db.Owner, { foreignKey: 'ownerId', as: 'owner' });
+
+db.Language.hasMany(db.Translation, { foreignKey: 'languageId', as: 'translations', onDelete: 'CASCADE' });
+db.Translation.belongsTo(db.Language, { foreignKey: 'languageId', as: 'language' });
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;

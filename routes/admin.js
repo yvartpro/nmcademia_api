@@ -10,6 +10,8 @@ const PackageController = require('../controllers/PackageController');
 const ProductController = require('../controllers/ProductController');
 const FAQController = require('../controllers/FAQController');
 const SettingController = require('../controllers/SettingController');
+const LanguageController = require('../controllers/LanguageController');
+const TranslationController = require('../controllers/TranslationController');
 const ChatController = require('../controllers/ChatController');
 const MediaController = require('../controllers/MediaController');
 const TestimonialController = require('../controllers/TestimonialController');
@@ -58,6 +60,16 @@ router.delete('/faqs/:id', FAQController.deleteFAQ);
 router.get('/settings', SettingController.getAllSettingsDetailed);
 router.put('/settings', SettingController.updateSettings);
 router.delete('/settings/:key', SettingController.deleteSetting);
+
+// Languages and translations
+router.get('/languages', LanguageController.getAllLanguages);
+router.post('/languages', LanguageController.createLanguage);
+router.put('/languages/:id', LanguageController.updateLanguage);
+router.delete('/languages/:id', LanguageController.deleteLanguage);
+
+router.get('/translations', TranslationController.getTranslations);
+router.post('/translations', TranslationController.upsertTranslation);
+router.post('/translations/bulk', TranslationController.bulkUpsertTranslations);
 
 // Testimonials
 router.post('/testimonials', TestimonialController.createTestimonial);
