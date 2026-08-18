@@ -1,0 +1,81 @@
+{
+  "header": {
+    "admin": "Admin",
+    "myPath": "My path"
+  },
+  "cta": {
+    "startJourney": "Start your journey"
+  },
+  "buttons": {
+    "save": "Save",
+    "join": "Join"
+  }
+  ,
+  "funnel": {
+    "header": { "exit": "✕ Exit Funnel" },
+    "step1": {
+      "title": "Is Network Marketing Academia for You?",
+      "intro": "A better future begins with the courage to take calculated risks.\n\nThe greatest entrepreneurs, innovators, and leaders in history all stepped beyond their comfort zones to pursue a greater vision. Network marketing is no different.\n\nIt is not for those seeking guarantees or shortcuts. It is for people who are willing to learn, grow, embrace challenges, develop leadership, and persevere when others give up.\n\nWill fear keep you where you are, or will courage help you create the future you truly want?\n\nIf you're ready to invest in yourself, step beyond your comfort zone, and build something meaningful, welcome to Network Marketing Academia — your journey starts here."
+    },
+    "step1_cta": { "getStarted": "Get Started →" },
+    "account": {
+      "title": "Create Your Account",
+      "labels": {
+        "fullName": "Full Name",
+        "email": "Email Address",
+        "phone": "Phone Number (Optional)"
+      },
+      "placeholders": {
+        "fullName": "John Doe",
+        "email": "john@example.com",
+        "phone": "+2348030001111"
+      },
+      "consent": "By signing up, I agree to receive learning materials, updates, and communications from Network Marketing Academia.",
+      "buttons": { "continue": "Continue →", "back": "Back" }
+    },
+    "country": {
+      "title": "Select Your Country",
+      "description": "We tailor the product prices, currencies, and support mentors based on your location.",
+      "access": "Access Presentation →"
+    },
+    "already": {
+      "step1": { "title": "Accelerate Your Leadership", "blurb": "Congratulations on building in the Network Marketing industry. You have stepped into a business that rewards courage, vision, and duplication." },
+      "whyTrainingTitle": "Why Professional Training Matters:",
+      "whyTrainingText": "Excitement alone isn't enough. Success in duplication requires modern lead generation systems, high-ticket mentoring, and team leadership.",
+      "analyzeCta": "Analyze Challenges →",
+      "challengesPrompt": "Select the challenges you are currently facing in your organization:",
+      "nextStep": "Next Step →"
+    },
+    "coach": {
+      "title": "Your Assigned Coach",
+      "matching": "Scanning network leaders matching your profile...",
+      "bookPrompt": "Fill in your details below to schedule your consultation and connect with your coach.",
+      "agree": "I agree to let NMA match me with an active coach and send me coaching updates.",
+      "joinWhatsapp": "Join WhatsApp  Group→"
+    },
+    "challengeOptions": {
+      "recruiting": "Recruiting prospects",
+      "rejection": "Fear of rejection",
+      "retention": "Team members quitting (retention)",
+      "upline": "Lack of upline support",
+      "habits": "Inconsistent daily habits",
+      "presentation": "Duplicating a simple presentation system"
+    }
+  },
+  "presentation": {
+    "welcomeBack": "Welcome back, leader. Review this business overview, and transition to your training curriculum when ready.",
+    "previous": "Previous Slide",
+    "next": "Next Slide →",
+    "done": "Done",
+    "finish": {
+      "readyTitle": "Ready to start your academy enrollment?",
+      "readyMessage": "Speak to a trainer on WhatsApp to assist with packaging and pioneer positioning.",
+      "overviewComplete": "Overview Complete",
+      "overviewMessage": "Proceed directly to your personalized learning curriculum dashboard.",
+      "thankYou": "Thank you for reviewing the business model",
+      "thankYouMessage": "Your assigned journey is set to this slide-overview. Direct any questions to your active coordinator."
+    }
+  },
+  "footer": { "copyright": "© 2026 Network Marketing Academia • Official Partner: Alliance In Motion Global" },
+  "brand": { "name": "Network Marketing Academia" }
+}

@@ -1,0 +1,82 @@
+{
+  "header": {
+    "admin": "Admin",
+    "myPath": "Mon parcours"
+  },
+  "cta": {
+    "startJourney": "Commencez votre parcours"
+  },
+  "buttons": {
+    "save": "Enregistrer",
+    "join": "Rejoindre"
+  }
+  ,
+  "funnel": {
+    "header": { "exit": "✕ Quitter" },
+    "step1": {
+      "title": "L'Académie du Marketing de Réseau est-elle pour Vous ?",
+      "intro": "Un avenir meilleur commence par le courage de prendre des risques calculés.\n\nLes plus grands entrepreneurs, innovateurs et leaders de l'histoire ont tous dépassé leur zone de confort pour poursuivre une vision plus grande. Le marketing de réseau n'est pas différent.\n\nCe n'est pas pour ceux qui cherchent des garanties ou des raccourcis. C'est pour les personnes prêtes à apprendre, évoluer, relever des défis, développer leur leadership et persévérer lorsque d'autres abandonnent.\n\nLa question est simple : la peur vous retient-elle là où vous êtes, ou le courage vous aidera-t-il à créer l'avenir que vous souhaitez vraiment ?\n\nSi vous êtes prêt à investir en vous-même, à sortir de votre zone de confort et à construire quelque chose de significatif, bienvenue à l'Académie du Marketing de Réseau — votre parcours commence ici."
+    },
+    "step1_cta": { "getStarted": "Commencer →" },
+    "account": {
+      "title": "Créez Votre Compte",
+      "labels": {
+        "fullName": "Nom complet",
+        "email": "Adresse e-mail",
+        "phone": "Numéro de téléphone (optionnel)"
+      },
+      "placeholders": {
+        "fullName": "Jean Dupont",
+        "email": "jean@example.com",
+        "phone": "+237650000000"
+      },
+      "consent": "En m'inscrivant, j'accepte de recevoir des supports d'apprentissage, des mises à jour et des communications de l'Académie du Marketing de Réseau.",
+      "buttons": { "continue": "Continuer →", "back": "Retour" }
+    },
+    "country": {
+      "title": "Sélectionnez votre pays",
+      "description": "Nous adaptons les prix, les devises et les mentors en fonction de votre localisation.",
+      "access": "Accéder à la présentation →"
+    },
+    "already": {
+      "step1": { "title": "Accélérez votre leadership", "blurb": "Félicitations pour votre parcours dans le marketing de réseau. Vous êtes entré dans une activité qui récompense le courage, la vision et la duplication." },
+      "whyTrainingTitle": "Pourquoi la formation professionnelle importe :",
+      "whyTrainingText": "L'excitation seule ne suffit pas. La réussite en duplication nécessite des systèmes modernes de génération de prospects, du mentorat haut de gamme et un leadership d'équipe.",
+      "analyzeCta": "Analyser les défis →",
+      "challengesPrompt": "Sélectionnez les défis que vous rencontrez actuellement dans votre organisation :",
+      "nextStep": "Étape suivante →"
+    },
+    "coach": {
+      "title": "Votre coach assigné",
+      "matching": "Recherche des leaders du réseau correspondant à votre profil...",
+      "bookPrompt": "Remplissez vos coordonnées ci-dessous pour planifier votre consultation et contacter votre coach.",
+      "agree": "J'accepte que NMA me mette en relation avec un coach actif et m'envoie des mises à jour de coaching.",
+      "joinWhatsapp": "Rejoindre le groupe WhatsApp→"
+    },
+    "challengeOptions": {
+      "recruiting": "Recrutement de prospects",
+      "rejection": "Peur du rejet",
+      "retention": "Départs d'équipe (rétention)",
+      "upline": "Manque de soutien upline",
+      "habits": "Habitudes quotidiennes incohérentes",
+      "presentation": "Dupliquer un système de présentation simple"
+    }
+  },
+  "presentation": {
+    "welcomeBack": "Bon retour, leader. Passez en revue cette présentation commerciale et accédez à votre cursus de formation lorsque vous êtes prêt.",
+    "previous": "Diapositive précédente",
+    "next": "Diapositive suivante →",
+    "done": "Terminé",
+    "finish": {
+      "readyTitle": "Prêt à commencer votre inscription à l'académie ?",
+      "readyMessage": "Parlez à un formateur sur WhatsApp pour vous aider avec les emballages et le positionnement pionnier.",
+      "overviewComplete": "Vue d'ensemble terminée",
+      "overviewMessage": "Accédez directement à votre tableau de bord de formation personnalisé.",
+      "thankYou": "Merci d'avoir consulté le modèle commercial",
+      "thankYouMessage": "Votre parcours assigné est défini sur cet aperçu. Adressez toute question à votre coordinateur actif."
+    }
+  },
+  "footer": { "copyright": "© 2026 Académie du Marketing de Réseau • Partenaire officiel : Alliance In Motion Global" },
+  "brand": { "name": "Académie du Marketing de Réseau" }
+}
+}
