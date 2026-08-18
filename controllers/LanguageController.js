@@ -1,4 +1,5 @@
 const { Language, Owner } = require('../models');
+const { Op } = require('sequelize');
 
 exports.getAllLanguages = async (req, res) => {
   try {
@@ -10,6 +11,28 @@ exports.getAllLanguages = async (req, res) => {
     res.json(languages);
   } catch (error) {
     console.error('Get languages error:', error);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+exports.getPublicLanguages = async (req, res) => {
+  try {
+    const ownerId = req.owner?.id ?? null;
+    const where = { isActive: true };
+
+    if (ownerId) {
+      where[Op.or] = [{ ownerId }, { ownerId: null }];
+    }
+
+    const languages = await Language.findAll({
+      where,
+      include: [{ model: Owner, as: 'owner' }],
+      order: [['sortOrder', 'ASC'], ['name', 'ASC']]
+    });
+
+    res.json(languages);
+  } catch (error) {
+    console.error('Get public languages error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };

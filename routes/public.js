@@ -15,11 +15,15 @@ const EarningStreamController = require('../controllers/EarningStreamController'
 const WayController = require('../controllers/WayController');
 const OwnerController = require('../controllers/OwnerController');
 const PresentationController = require('../controllers/PresentationController');
+const LanguageController = require('../controllers/LanguageController');
 
 const tenantMiddleware = require('../middleware/tenant');
 
 // Apply tenant middleware to all public routes
 router.use(tenantMiddleware);
+
+// Public language catalog
+router.get('/languages', LanguageController.getPublicLanguages);
 
 // Owner Profile
 router.get('/owner/profile', OwnerController.getPublicProfile);
