@@ -3,7 +3,6 @@ module.exports = (sequelize, DataTypes) => {
     code: {
       type: DataTypes.STRING(10),
       allowNull: false,
-      unique: true,
       validate: {
         notEmpty: true
       }
@@ -34,6 +33,13 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     tableName: 'nma_languages',
-    timestamps: true
+    timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ['ownerId', 'code'],
+        name: 'owner_code_unique'
+      }
+    ]
   });
 };
