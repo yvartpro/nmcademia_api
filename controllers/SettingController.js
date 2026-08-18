@@ -1,4 +1,5 @@
-const { Setting, MediaAsset } = require('../models');
+const { Setting, MediaAsset, Translation, Language } = require('../models');
+const { getTranslationValue } = require('../utils/translations');
 
 exports.getAllSettings = async (req, res) => {
   try {
@@ -45,6 +46,44 @@ exports.getAllSettings = async (req, res) => {
       console.error('Failed to auto-resolve settings video thumbnails:', dbErr);
     }
 
+    // If a language was requested, attempt to merge translations
+    const requestedLang = (req.query.lang || req.query.language || '').toString().trim().toLowerCase() || null;
+
+    // Determine default language for this owner (tenant)
+    let defaultLangCode = null;
+    try {
+      const ownerId = req.owner && req.owner.id ? req.owner.id : null;
+      let defLang = null;
+      if (ownerId) {
+        defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
+      }
+      if (!defLang) {
+        defLang = await Language.findOne({ where: { isDefault: true } });
+      }
+      if (defLang) defaultLangCode = (defLang.code || '').toString().toLowerCase();
+    } catch (e) {
+      console.error('Failed to resolve default language for owner:', e);
+    }
+
+    if (requestedLang) {
+      try {
+        const keys = Object.keys(configMap).map(k => String(k));
+        const translations = await Translation.findAll({
+          where: { modelName: 'Setting', recordId: keys },
+          include: [{ model: Language, as: 'language' }]
+        });
+
+        // Merge translations per key
+        keys.forEach(key => {
+          const forKey = translations.filter(t => String(t.recordId) === String(key));
+          const translated = getTranslationValue({ translations: forKey, languageCode: requestedLang, defaultLanguageCode: defaultLangCode, field: 'value', fallback: configMap[key] });
+          configMap[key] = translated;
+        });
+      } catch (tErr) {
+        console.error('Failed to merge setting translations:', tErr);
+      }
+    }
+
     res.json(configMap);
   } catch (error) {
     console.error('Get settings error:', error);
@@ -58,12 +97,29 @@ exports.getAllSettingsDetailed = async (req, res) => {
     const settings = await Setting.findAll({
       order: [['key', 'ASC']]
     });
-    res.json(settings.map(s => ({
-      id: s.id,
-      key: s.key,
-      value: s.value,
-      description: s.description
-    })));
+    // Load translations for these settings to include in admin UI
+    const keys = settings.map(s => String(s.key));
+    const translations = await Translation.findAll({ where: { modelName: 'Setting', recordId: keys }, include: [{ model: Language, as: 'language' }] });
+
+    const result = settings.map(s => {
+      const t = translations.filter(tr => String(tr.recordId) === String(s.key)).map(tr => ({
+        id: tr.id,
+        field: tr.field,
+        value: tr.value,
+        languageId: tr.languageId,
+        languageCode: tr.language?.code,
+        languageName: tr.language?.name
+      }));
+      return {
+        id: s.id,
+        key: s.key,
+        value: s.value,
+        description: s.description,
+        translations: t
+      };
+    });
+
+    res.json(result);
   } catch (error) {
     console.error('Get detailed settings error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
