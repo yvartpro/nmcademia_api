@@ -1,5 +1,5 @@
 const { EarningStream, MediaAsset } = require('../models');
-
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // GET /admin/earning-streams (all, including inactive)
 exports.getAllEarningStreamsAdmin = async (req, res) => {
@@ -22,7 +22,13 @@ exports.getAllEarningStreams = async (req, res) => {
       order: [['order', 'ASC']],
       include: [{ model: MediaAsset, as: 'media' }]
     });
-    res.json(streams);
+    const translated = await mergeTranslationsForRecords({
+      req,
+      records: streams,
+      modelName: 'EarningStream',
+      fields: ['title', 'shortDescription', 'longDescription']
+    });
+    res.json(translated);
   } catch (err) {
     console.error('getAllEarningStreams error:', err);
     res.status(500).json({ message: 'Failed to fetch earning streams' });
