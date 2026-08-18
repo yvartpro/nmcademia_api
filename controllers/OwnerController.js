@@ -1,4 +1,5 @@
 const { Owner, MediaAsset } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // Fetch public profile for frontend based on resolved tenant
 exports.getPublicProfile = async (req, res) => {
@@ -9,8 +10,7 @@ exports.getPublicProfile = async (req, res) => {
     }
 
     const whatsappGroupLink = owner.whatsappGroupLink || owner.whatsapp_group_link || null;
-
-    res.json({
+    const base = {
       name: owner.name,
       bio: owner.bio,
       intro: owner.intro || null,
@@ -19,6 +19,19 @@ exports.getPublicProfile = async (req, res) => {
       whatsapp_group_link: whatsappGroupLink,
       domainName: owner.domainName,
       photo: owner.photo || null
+    };
+
+    const [translated] = await mergeTranslationsForRecords({
+      req,
+      records: [{ ...base, translationRecordId: 'profile' }],
+      modelName: 'Owner',
+      fields: ['bio', 'intro'],
+      recordIdField: 'translationRecordId'
+    });
+
+    res.json({
+      ...base,
+      ...translated
     });
   } catch (error) {
     console.error('Error fetching public owner profile:', error);

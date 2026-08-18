@@ -1,4 +1,5 @@
 const { ManufacturingPartner, MediaAsset } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // GET /manufacturing-partners (public)
 exports.getAllManufacturingPartners = async (req, res) => {
@@ -7,7 +8,8 @@ exports.getAllManufacturingPartners = async (req, res) => {
       include: [{ model: MediaAsset, as: 'logo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }],
       order: [['order', 'ASC']]
     });
-    res.json(partners);
+    const translated = await mergeTranslationsForRecords({ req, records: partners, modelName: 'ManufacturingPartner', fields: ['description'] });
+    res.json(translated);
   } catch (err) {
     console.error('getAllManufacturingPartners error:', err);
     res.status(500).json({ message: 'Failed to fetch manufacturing partners' });

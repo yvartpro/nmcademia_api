@@ -1,5 +1,6 @@
 const { Package, PackagePrice, MediaAsset } = require('../models');
 const { toWebPath } = require('../utils/paths');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 const withMediaPaths = (pkg) => {
   if (!pkg) return pkg;
@@ -23,7 +24,8 @@ exports.getAllPackages = async (req, res) => {
       ],
       order: [['createdAt', 'DESC']]
     });
-    res.json(packages.map(withMediaPaths));
+    const translated = await mergeTranslationsForRecords({ req, records: packages, modelName: 'Package', fields: ['description'] });
+    res.json(translated.map(withMediaPaths));
   } catch (error) {
     console.error('Get all packages error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });
@@ -39,7 +41,8 @@ exports.getPackageById = async (req, res) => {
       ]
     });
     if (!pkg) return res.status(404).json({ message: 'Package not found' });
-    res.json(withMediaPaths(pkg));
+    const [translated] = await mergeTranslationsForRecords({ req, records: [pkg], modelName: 'Package', fields: ['description'] });
+    res.json(withMediaPaths(translated));
   } catch (error) {
     res.status(500).json({ message: 'Internal server error' });
   }

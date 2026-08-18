@@ -1,4 +1,5 @@
 const { Way } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 const parseBody = (body) => {
   if (!body) return null;
@@ -31,7 +32,13 @@ exports.getAllWays = async (req, res) => {
       where: { active: true },
       order: [['order', 'ASC']]
     });
-    res.json(ways.map(normalizeWayBody));
+    const translated = await mergeTranslationsForRecords({
+      req,
+      records: ways,
+      modelName: 'Way',
+      fields: ['title', 'subtitle', 'bodyDescription', 'bodyBullets']
+    });
+    res.json(translated.map(normalizeWayBody));
   } catch (err) {
     console.error('getAllWays error:', err);
     res.status(500).json({ message: 'Failed to fetch ways of earning' });

@@ -1,5 +1,6 @@
 const { FAQ } = require('../models');
 const { Op } = require('sequelize');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 exports.getAllFAQs = async (req, res) => {
   try {
@@ -18,7 +19,8 @@ exports.getAllFAQs = async (req, res) => {
       order: [['order', 'ASC'], ['createdAt', 'ASC']]
     });
 
-    res.json(faqs);
+    const translated = await mergeTranslationsForRecords({ req, records: faqs, modelName: 'FAQ', fields: ['question', 'answer'] });
+    res.json(translated);
   } catch (error) {
     console.error('Get FAQs error:', error);
     res.status(500).json({ message: 'Internal server error', error: error.message });

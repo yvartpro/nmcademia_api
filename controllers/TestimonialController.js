@@ -1,4 +1,5 @@
 const { Testimonial, MediaAsset } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // GET /testimonials (public)
 exports.getAllTestimonials = async (req, res) => {
@@ -11,7 +12,8 @@ exports.getAllTestimonials = async (req, res) => {
       ],
       order: [['order', 'ASC']]
     });
-    res.json(testimonials);
+    const translated = await mergeTranslationsForRecords({ req, records: testimonials, modelName: 'Testimonial', fields: ['quote', 'lifestyleTag'] });
+    res.json(translated);
   } catch (err) {
     console.error('getAllTestimonials error:', err);
     res.status(500).json({ message: 'Failed to fetch testimonials' });

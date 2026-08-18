@@ -1,3 +1,5 @@
+const { Translation, Language } = require('../models');
+
 const getTranslationValue = ({ translations = [], languageCode, defaultLanguageCode, field, fallback = '' }) => {
   if (!Array.isArray(translations) || !field) {
     return fallback;
@@ -19,6 +21,78 @@ const getTranslationValue = ({ translations = [], languageCode, defaultLanguageC
   return fallback;
 };
 
+const resolveTranslationContext = async (req) => {
+  const requestedCode = (req?.query?.lang || req?.query?.language || '').toString().trim().toLowerCase();
+  let defaultLanguageCode = '';
+
+  try {
+    const ownerId = req?.owner?.id || null;
+    let defLang = null;
+    if (ownerId) {
+      defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
+    }
+    if (!defLang) {
+      defLang = await Language.findOne({ where: { isDefault: true } });
+    }
+    if (defLang) {
+      defaultLanguageCode = String(defLang.code || '').trim().toLowerCase();
+    }
+  } catch (error) {
+    console.error('Failed to resolve default language for translations:', error);
+  }
+
+  return {
+    languageCode: requestedCode || defaultLanguageCode,
+    defaultLanguageCode
+  };
+};
+
+const mergeTranslationsForRecords = async ({ req, records, modelName, fields = [], recordIdField = 'id' }) => {
+  if (!Array.isArray(records) || !records.length || !modelName || !fields.length) {
+    return records;
+  }
+
+  const { languageCode, defaultLanguageCode } = await resolveTranslationContext(req);
+  if (!languageCode) {
+    return records;
+  }
+
+  const ids = [...new Set(records
+    .filter(Boolean)
+    .map(record => String(record?.[recordIdField] ?? record?.id ?? ''))
+    .filter(Boolean))];
+
+  if (!ids.length) {
+    return records;
+  }
+
+  const translations = await Translation.findAll({
+    where: { modelName, recordId: ids },
+    include: [{ model: Language, as: 'language' }]
+  });
+
+  return records.map((record) => {
+    if (!record) return record;
+    const next = record.toJSON ? record.toJSON() : { ...record };
+    const recordId = String(record?.[recordIdField] ?? record?.id ?? '');
+    const recordTranslations = translations.filter(item => String(item.recordId) === recordId);
+
+    fields.forEach((field) => {
+      next[field] = getTranslationValue({
+        translations: recordTranslations,
+        languageCode,
+        defaultLanguageCode,
+        field,
+        fallback: next[field]
+      });
+    });
+
+    return next;
+  });
+};
+
 module.exports = {
-  getTranslationValue
+  getTranslationValue,
+  resolveTranslationContext,
+  mergeTranslationsForRecords
 };

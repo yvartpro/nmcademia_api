@@ -1,4 +1,5 @@
 const { Presentation, MediaAsset, Country } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // GET /admin/presentations
 exports.getAllPresentationsAdmin = async (req, res) => {
@@ -44,7 +45,18 @@ exports.getPresentationByCountry = async (req, res) => {
       where: { active: true }
     });
 
-    res.json(presentation || null);
+    if (!presentation) {
+      return res.json(null);
+    }
+
+    const [translated] = await mergeTranslationsForRecords({
+      req,
+      records: [presentation],
+      modelName: 'Presentation',
+      fields: ['title', 'description']
+    });
+
+    res.json(translated || null);
   } catch (err) {
     console.error('getPresentationByCountry error:', err);
     res.status(500).json({ message: 'Failed to fetch presentation' });

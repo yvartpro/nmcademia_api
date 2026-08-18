@@ -1,4 +1,5 @@
 const { Founder, MediaAsset } = require('../models');
+const { mergeTranslationsForRecords } = require('../utils/translations');
 
 // GET /founders (public)
 exports.getAllFounders = async (req, res) => {
@@ -7,7 +8,8 @@ exports.getAllFounders = async (req, res) => {
       include: [{ model: MediaAsset, as: 'photo', attributes: ['id', 'filePath', 'thumbnailPath', 'title'] }],
       order: [['order', 'ASC']]
     });
-    res.json(founders);
+    const translated = await mergeTranslationsForRecords({ req, records: founders, modelName: 'Founder', fields: ['role', 'bio'] });
+    res.json(translated);
   } catch (err) {
     console.error('getAllFounders error:', err);
     res.status(500).json({ message: 'Failed to fetch founders' });
