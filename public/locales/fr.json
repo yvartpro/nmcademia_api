@@ -96,6 +96,22 @@
       "partner": "Entreprise partenaire : Alliance In Motion Global"
     }
   },
+  "joinWhatsApp": {
+    "welcomeTitle": "Bienvenue dans notre communauté",
+    "welcomeMessage": "Il n'y a actuellement pas de bureau physique dans votre pays, mais vous n'êtes pas seul ! Rejoignez notre groupe WhatsApp exclusif pour vous connecter avec des mentors, poser des questions et grandir ensemble.",
+    "loading": "Chargement...",
+    "cta": {
+      "join": "Rejoindre le groupe WhatsApp",
+      "backHome": "Retour à l'accueil"
+    },
+    "info": {
+      "heading": "📚 Ce que vous obtiendrez",
+      "item1": "Accès direct aux formateurs et mentors",
+      "item2": "Soutien et accompagnement en temps réel",
+      "item3": "Communauté de bâtisseurs partageant les mêmes idées",
+      "item4": "Mises à jour et opportunités exclusives"
+    }
+  },
   "funnel": {
     "header": { "exit": "✕ Quitter" },
     "step1": {
@@ -146,6 +162,14 @@
       "habits": "Habitudes quotidiennes incohérentes",
       "presentation": "Dupliquer un système de présentation simple"
     }
+  },
+  "solutions": {
+    "recruiting": "Systèmes de génération de leads via les réseaux sociaux.",
+    "rejection": "Coaching d'état d'esprit et méthodes de tri.",
+    "retention": "Matériel de formation duplicable.",
+    "upline": "Appariement avec un coach Elite Academia.",
+    "habits": "Quêtes quotidiennes et suivi des séries.",
+    "default": "Diapositives de présentation interactives."
   },
   "presentation": {
     "welcomeBack": "Bon retour, leader. Passez en revue cette présentation commerciale et accédez à votre cursus de formation lorsque vous êtes prêt.",

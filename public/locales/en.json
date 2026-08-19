@@ -96,6 +96,22 @@
       "partner": "Partner Company: Alliance In Motion Global"
     }
   },
+  "joinWhatsApp": {
+    "welcomeTitle": "Welcome to Our Community",
+    "welcomeMessage": "There is currently no physical office in your country yet, but you're not alone! Join our exclusive WhatsApp group to connect with mentors, ask questions, and grow together.",
+    "loading": "Loading...",
+    "cta": {
+      "join": "Join WhatsApp Group",
+      "backHome": "Back to Home"
+    },
+    "info": {
+      "heading": "📚 What You'll Get",
+      "item1": "Direct access to trainers and mentors",
+      "item2": "Real-time support and guidance",
+      "item3": "Community of like-minded builders",
+      "item4": "Exclusive updates and opportunities"
+    }
+  },
   "funnel": {
     "header": { "exit": "✕ Exit Funnel" },
     "step1": {
@@ -146,6 +162,14 @@
       "habits": "Inconsistent daily habits",
       "presentation": "Duplicating a simple presentation system"
     }
+  },
+  "solutions": {
+    "recruiting": "Social Media Lead Generation systems.",
+    "rejection": "Mindset Coaching & Sorting methods.",
+    "retention": "Duplicating training materials.",
+    "upline": "Assigned Elite Academia Coach matching.",
+    "habits": "Daily Quests and Streaks trackers.",
+    "default": "Interactive presentation slides."
   },
   "presentation": {
     "welcomeBack": "Welcome back, leader. Review this business overview, and transition to your training curriculum when ready.",
