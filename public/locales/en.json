@@ -9,8 +9,93 @@
   "buttons": {
     "save": "Save",
     "join": "Join"
-  }
-  ,
+  },
+  "landing": {
+    "nav": {
+      "continuePresentation": "Continue presentation",
+      "joinWhatsApp": "Join WhatsApp",
+      "startJourney": "Start Journey",
+      "watchIntroduction": "Watch Introduction",
+      "loadingLanguages": "Loading languages...",
+      "noLanguages": "No languages"
+    },
+    "hero": {
+      "title": "Network Marketing Academia is not here to entertain you—",
+      "titleAccent": "it is here to challenge your thinking and elevate your mindset.",
+      "subtitle": "The world we were prepared for is no longer the world we are living in. Jobs are shrinking, inflation is rising, and the promise that traditional education alone guarantees freedom is collapsing."
+    },
+    "mission": {
+      "title": "A Wake-Up Call for a New Economy",
+      "powerTitle": "Power belongs to those who build networks.",
+      "powerText1": "Network Marketing Academia exists to educate a new generation of thinkers, leaders, and builders who understand that the future belongs to those who can create networks, influence people, and build communities in the digital age.",
+      "powerText2": "This is more than selling products. It is the science of human connection, leadership multiplied through team duplication, and entrepreneurship powered by networks.",
+      "modernEconomyTitle": "In the Modern Digital Economy:",
+      "modernEconomy": {
+        "leverageLabel": "Leverage is power:",
+        "leverageText": "Turn relationships into global economic ecosystems.",
+        "mobileLabel": "Mobile independence:",
+        "mobileText": "Direct your global team from a single smartphone.",
+        "pioneerLabel": "Pioneer advantage:",
+        "pioneerText": "Position yourself early in expanding markets."
+      }
+    },
+    "why": {
+      "title": "What Is Network Marketing ?",
+      "description": "A network marketing company is a business that sells its products or services through a network of independent distributors rather than through traditional retail stores. These companies outsource their entire sales and marketing function to individual representatives who earn commissions on personal sales and on the sales of their recruited teams. Network marketing companies operate across many industries: health supplements, skincare, nutrition, financial services, travel, and technology.",
+      "howTitle": "How a Network Marketing Company Operates",
+      "howDescription": "The company handles product development, manufacturing, shipping, and commission payments. Distributors handle customer acquisition, product promotion, and team recruitment."
+    },
+    "journeySelection": {
+      "title": "Which Best Describes You?",
+      "subtitle": "Your selection determines your entire user journey. We do not believe in one-size-fits-all presentation plans."
+    },
+    "proofStats": {
+      "activeLearners": "Active Learners",
+      "countriesRepresented": "Countries Represented",
+      "successStories": "Success Stories"
+    },
+    "journeys": {
+      "newToNm": {
+        "title": "New to Network Marketing",
+        "desc": "Learn the fundamentals of duplication, binary systems, and digital lead generation from the ground up.",
+        "ctaLabel": "Onboarding"
+      },
+      "alreadyInNm": {
+        "title": "Already in Network Marketing",
+        "desc": "Skip basic definitions. Supercharge your coaching, team retention, upline support, and global recruiting.",
+        "ctaLabel": "Assessment"
+      },
+      "switchCompanies": {
+        "title": "Want to Switch Companies",
+        "desc": "Evaluate key company choices, group points accumulation, and position early inside pioneer nodes.",
+        "ctaLabel": "Evaluation"
+      },
+      "exploring": {
+        "title": "Just Exploring Opportunities",
+        "desc": "Take a short, visual presentation of the company plan and explore the network economy at your own pace.",
+        "ctaLabel": "Qualifications"
+      },
+      "incomeDiversification": {
+        "title": "Tired of Depending on Single Income",
+        "desc": "Learn how side network leverage works without quitting your job, and buffer yourself against inflation.",
+        "ctaLabel": "Benefits"
+      },
+      "jobless": {
+        "title": "Tired of Being Jobless",
+        "desc": "Gain high-demand marketing, digital leadership, and communication skills with a zero-risk startup model.",
+        "ctaLabel": "Hope Flow"
+      },
+      "fastTrack": {
+        "title": "I Want This Business By All Means",
+        "desc": "Compare entry packages immediately, get assigned a direct mentor, and secure WhatsApp registration assistance.",
+        "ctaLabel": "Fast Track"
+      }
+    },
+    "footer": {
+      "copyright": "© 2026 Network Marketing Academia • All Rights Reserved",
+      "partner": "Partner Company: Alliance In Motion Global"
+    }
+  },
   "funnel": {
     "header": { "exit": "✕ Exit Funnel" },
     "step1": {
@@ -74,6 +159,17 @@
       "overviewMessage": "Proceed directly to your personalized learning curriculum dashboard.",
       "thankYou": "Thank you for reviewing the business model",
       "thankYouMessage": "Your assigned journey is set to this slide-overview. Direct any questions to your active coordinator."
+    }
+  },
+  "member": {
+    "home": {
+      "continueLearning": "Continue Learning",
+      "seeAll": "See all",
+      "todaysQuest": "Today's Quest",
+      "dayStreak": "day streak",
+      "communityPulse": "Community Pulse",
+      "join": "Join",
+      "recommended": "Recommended For You"
     }
   },
   "footer": { "copyright": "© 2026 Network Marketing Academia • Official Partner: Alliance In Motion Global" },

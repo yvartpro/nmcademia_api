@@ -9,8 +9,93 @@
   "buttons": {
     "save": "Enregistrer",
     "join": "Rejoindre"
-  }
-  ,
+  },
+  "landing": {
+    "nav": {
+      "continuePresentation": "Continuer la présentation",
+      "joinWhatsApp": "Rejoindre WhatsApp",
+      "startJourney": "Commencer le parcours",
+      "watchIntroduction": "Regarder l'introduction",
+      "loadingLanguages": "Chargement des langues...",
+      "noLanguages": "Aucune langue"
+    },
+    "hero": {
+      "title": "L'Académie du Marketing de Réseau n'est pas là pour vous divertir —",
+      "titleAccent": "elle est là pour challenger votre pensée et élever votre mentalité.",
+      "subtitle": "Le monde pour lequel nous étions préparés n'est plus le monde dans lequel nous vivons. Les emplois se réduisent, l'inflation monte, et la promesse selon laquelle l'éducation traditionnelle garantit seule la liberté s'effondre."
+    },
+    "mission": {
+      "title": "Un réveil pour une nouvelle économie",
+      "powerTitle": "Le pouvoir appartient à ceux qui construisent des réseaux.",
+      "powerText1": "L'Académie du Marketing de Réseau existe pour éduquer une nouvelle génération de penseurs, leaders et bâtisseurs qui comprennent que l'avenir appartient à ceux qui savent créer des réseaux, influencer les gens et construire des communautés à l'ère numérique.",
+      "powerText2": "Ce n'est pas seulement vendre des produits. C'est la science de la connexion humaine, du leadership multiplié par la duplication d'équipe et de l'entrepreneuriat alimenté par les réseaux.",
+      "modernEconomyTitle": "Dans l'économie numérique moderne :",
+      "modernEconomy": {
+        "leverageLabel": "Le levier est le pouvoir :",
+        "leverageText": "Transformez les relations en écosystèmes économiques mondiaux.",
+        "mobileLabel": "Indépendance mobile :",
+        "mobileText": "Dirigez votre équipe mondiale depuis un seul smartphone.",
+        "pioneerLabel": "Avantage pionnier :",
+        "pioneerText": "Positionnez-vous tôt dans des marchés en expansion."
+      }
+    },
+    "why": {
+      "title": "Qu'est-ce que le marketing de réseau ?",
+      "description": "Une entreprise de marketing de réseau est une entreprise qui vend ses produits ou services à travers un réseau de distributeurs indépendants plutôt que via des magasins de détail traditionnels. Ces entreprises externalisent toute leur fonction de vente et de marketing à des représentants individuels qui gagnent des commissions sur les ventes personnelles et sur celles de leurs équipes recrutées. Les entreprises de marketing de réseau opèrent dans de nombreux secteurs : compléments alimentaires, soins de la peau, nutrition, services financiers, tourisme et technologie.",
+      "howTitle": "Comment fonctionne une entreprise de marketing de réseau",
+      "howDescription": "L'entreprise s'occupe du développement produit, de la fabrication, de l'expédition et des paiements de commissions. Les distributeurs s'occupent de l'acquisition de clients, de la promotion des produits et du recrutement d'équipe."
+    },
+    "journeySelection": {
+      "title": "Qui vous ressemble le plus ?",
+      "subtitle": "Votre choix détermine l'ensemble de votre parcours. Nous ne croyons pas à un plan de présentation unique."
+    },
+    "proofStats": {
+      "activeLearners": "Apprenants actifs",
+      "countriesRepresented": "Pays représentés",
+      "successStories": "Histoires de succès"
+    },
+    "journeys": {
+      "newToNm": {
+        "title": "Nouveau dans le marketing de réseau",
+        "desc": "Apprenez les fondamentaux de la duplication, des systèmes binaires et de la génération de leads numériques de zéro.",
+        "ctaLabel": "Intégration"
+      },
+      "alreadyInNm": {
+        "title": "Déjà dans le marketing de réseau",
+        "desc": "Passez les bases. Accélérez votre coaching, la rétention d'équipe, le soutien upline et le recrutement mondial.",
+        "ctaLabel": "Évaluation"
+      },
+      "switchCompanies": {
+        "title": "Je veux changer d'entreprise",
+        "desc": "Évaluez les choix d'entreprise, l'accumulation de points de groupe et positionnez-vous tôt dans les nœuds pionniers.",
+        "ctaLabel": "Évaluation"
+      },
+      "exploring": {
+        "title": "Je explore simplement des opportunités",
+        "desc": "Suivez une courte présentation visuelle du plan d'entreprise et explorez l'économie de réseau à votre rythme.",
+        "ctaLabel": "Qualifications"
+      },
+      "incomeDiversification": {
+        "title": "Je suis fatigué de dépendre d'un seul revenu",
+        "desc": "Découvrez comment fonctionne le levier du réseau sans quitter votre emploi, et protégez-vous de l'inflation.",
+        "ctaLabel": "Avantages"
+      },
+      "jobless": {
+        "title": "Je suis fatigué d'être sans emploi",
+        "desc": "Développez des compétences en marketing, leadership numérique et communication à fort potentiel, avec un modèle de startup à risque zéro.",
+        "ctaLabel": "Flux d'espoir"
+      },
+      "fastTrack": {
+        "title": "Je veux ce business à tout prix",
+        "desc": "Comparez immédiatement les offres d'entrée, obtenez un mentor direct et bénéficiez d'une assistance pour l'inscription WhatsApp.",
+        "ctaLabel": "Accès rapide"
+      }
+    },
+    "footer": {
+      "copyright": "© 2026 Académie du Marketing de Réseau • Tous droits réservés",
+      "partner": "Entreprise partenaire : Alliance In Motion Global"
+    }
+  },
   "funnel": {
     "header": { "exit": "✕ Quitter" },
     "step1": {
@@ -76,7 +161,17 @@
       "thankYouMessage": "Votre parcours assigné est défini sur cet aperçu. Adressez toute question à votre coordinateur actif."
     }
   },
+  "member": {
+    "home": {
+      "continueLearning": "Poursuivre l'apprentissage",
+      "seeAll": "Voir tout",
+      "todaysQuest": "Quête du jour",
+      "dayStreak": "jours de série",
+      "communityPulse": "Pulse de la communauté",
+      "join": "Rejoindre",
+      "recommended": "Recommandé pour vous"
+    }
+  },
   "footer": { "copyright": "© 2026 Académie du Marketing de Réseau • Partenaire officiel : Alliance In Motion Global" },
   "brand": { "name": "Académie du Marketing de Réseau" }
-}
 }
