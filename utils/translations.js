@@ -21,7 +21,14 @@ const getTranslationValue = ({ translations = [], languageCode, defaultLanguageC
   const cleanLanguageCode = String(languageCode || '').trim().toLowerCase();
   const cleanDefaultLanguageCode = String(defaultLanguageCode || '').trim().toLowerCase();
 
-  const lookup = translations.filter(item => item && item.field === field);
+  const lookup = translations
+    .filter(item => item && item.field === field)
+    .sort((a, b) => {
+      const aOrder = Number(a?.language?.sortOrder ?? a?.sortOrder ?? 0);
+      const bOrder = Number(b?.language?.sortOrder ?? b?.sortOrder ?? 0);
+      return aOrder - bOrder;
+    });
+
   const exact = lookup.find(item => String(item.languageCode || item.language?.code || '').trim().toLowerCase() === cleanLanguageCode);
   if (exact && (exact.value !== null && exact.value !== undefined && exact.value !== '')) return exact.value;
 
@@ -42,10 +49,16 @@ const resolveTranslationContext = async (req) => {
     const ownerId = req?.owner?.id || req?.user?.ownerId || null;
     let defLang = null;
     if (ownerId) {
-      defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
+      defLang = await Language.findOne({
+        where: { ownerId, isDefault: true },
+        order: [['sortOrder', 'ASC'], ['name', 'ASC']]
+      });
     }
     if (!defLang) {
-      defLang = await Language.findOne({ where: { isDefault: true } });
+      defLang = await Language.findOne({
+        where: { isDefault: true },
+        order: [['sortOrder', 'ASC'], ['name', 'ASC']]
+      });
     }
     if (defLang) {
       defaultLanguageCode = String(defLang.code || '').trim().toLowerCase();

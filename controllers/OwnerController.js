@@ -12,7 +12,7 @@ exports.getPublicProfile = async (req, res) => {
     const whatsappGroupLink = owner.whatsappGroupLink || owner.whatsapp_group_link || null;
     const base = {
       name: owner.name,
-      bio: owner.bio,
+      bio: owner.bio || null,
       intro: owner.intro || null,
       whatsappNumber: owner.whatsappNumber,
       whatsappGroupLink,
@@ -23,7 +23,7 @@ exports.getPublicProfile = async (req, res) => {
 
     const [translated] = await mergeTranslationsForRecords({
       req,
-      records: [{ ...base, translationRecordId: 'profile' }],
+      records: [{ ...base, translationRecordId: String(owner.id) }],
       modelName: 'Owner',
       fields: ['bio', 'intro'],
       recordIdField: 'translationRecordId'
