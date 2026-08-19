@@ -23,7 +23,7 @@ exports.getPublicProfile = async (req, res) => {
 
     const [translated] = await mergeTranslationsForRecords({
       req,
-      records: [{ ...base, translationRecordId: String(owner.id) }],
+      records: [{ ...base, translationRecordId: 'profile' }],
       modelName: 'Owner',
       fields: ['bio', 'intro'],
       recordIdField: 'translationRecordId'
