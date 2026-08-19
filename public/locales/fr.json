@@ -316,13 +316,40 @@
   },
   "member": {
     "home": {
+      "greetings": {
+        "morning": "Bonjour,",
+        "afternoon": "Bon après-midi,",
+        "evening": "Bonsoir,"
+      },
+      "level": "Niveau",
       "continueLearning": "Poursuivre l'apprentissage",
       "seeAll": "Voir tout",
       "todaysQuest": "Quête du jour",
       "dayStreak": "jours de série",
       "communityPulse": "Pulse de la communauté",
       "join": "Rejoindre",
-      "recommended": "Recommandé pour vous"
+      "recommended": "Recommandé pour vous",
+      "xpToLevel": "XP avant le niveau",
+      "maxLevelReached": "Niveau maximum atteint",
+      "complete": "terminé",
+      "funnelOptions": {
+        "title": "Choisissez votre prochaine étape",
+        "explore": {
+          "badge": "Explorer",
+          "title": "Découvrir l'opportunité",
+          "description": "Apprenez les bases et voyez si ce parcours correspond à vos objectifs."
+        },
+        "learn": {
+          "badge": "Apprendre",
+          "title": "Commencer le parcours d'apprentissage",
+          "description": "Suivez des leçons structurées et développez votre confiance étape par étape."
+        },
+        "build": {
+          "badge": "Construire",
+          "title": "Développer votre activité",
+          "description": "Passez au parcours leader avec une formation plus profonde et une action ciblée."
+        }
+      }
     }
   },
   "footer": { "copyright": "© 2026 Académie du Marketing de Réseau • Partenaire officiel : Alliance In Motion Global" },

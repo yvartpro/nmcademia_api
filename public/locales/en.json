@@ -316,13 +316,40 @@
   },
   "member": {
     "home": {
+      "greetings": {
+        "morning": "Good morning,",
+        "afternoon": "Good afternoon,",
+        "evening": "Good evening,"
+      },
+      "level": "Level",
       "continueLearning": "Continue Learning",
       "seeAll": "See all",
       "todaysQuest": "Today's Quest",
       "dayStreak": "day streak",
       "communityPulse": "Community Pulse",
       "join": "Join",
-      "recommended": "Recommended For You"
+      "recommended": "Recommended For You",
+      "xpToLevel": "XP to Level",
+      "maxLevelReached": "Max level reached",
+      "complete": "complete",
+      "funnelOptions": {
+        "title": "Choose your next step",
+        "explore": {
+          "badge": "Explore",
+          "title": "Review the opportunity",
+          "description": "Learn the basics and see if this path fits your goals."
+        },
+        "learn": {
+          "badge": "Learn",
+          "title": "Start the learning track",
+          "description": "Follow structured lessons and build confidence step by step."
+        },
+        "build": {
+          "badge": "Build",
+          "title": "Grow your business",
+          "description": "Move into the leader path with deeper training and action."
+        }
+      }
     }
   },
   "footer": { "copyright": "© 2026 Network Marketing Academia • Official Partner: Alliance In Motion Global" },
