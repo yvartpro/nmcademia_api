@@ -1,6 +1,19 @@
+const { Op } = require('sequelize');
 const { Translation, Language } = require('../models');
 
 const normalizeRecordId = (value) => String(value ?? '');
+
+const getAllowedLanguageIds = async (req) => {
+  const ownerId = req?.owner?.id || req?.user?.ownerId || null;
+  const where = ownerId ? { [Op.or]: [{ ownerId }, { ownerId: null }] } : { ownerId: null };
+
+  const languages = await Language.findAll({
+    attributes: ['id'],
+    where
+  });
+
+  return languages.map(language => Number(language.id)).filter(Boolean);
+};
 
 exports.getTranslations = async (req, res) => {
   try {
@@ -9,7 +22,21 @@ exports.getTranslations = async (req, res) => {
 
     if (modelName) where.modelName = String(modelName);
     if (recordId) where.recordId = normalizeRecordId(recordId);
-    if (languageId) where.languageId = Number(languageId);
+
+    const allowedLanguageIds = await getAllowedLanguageIds(req);
+    if (!allowedLanguageIds.length) {
+      return res.json([]);
+    }
+
+    if (languageId) {
+      const requestedLanguageId = Number(languageId);
+      if (!allowedLanguageIds.includes(requestedLanguageId)) {
+        return res.json([]);
+      }
+      where.languageId = requestedLanguageId;
+    } else {
+      where.languageId = allowedLanguageIds;
+    }
 
     const translations = await Translation.findAll({
       where,
@@ -34,6 +61,11 @@ exports.upsertTranslation = async (req, res) => {
 
     const safeRecordId = normalizeRecordId(recordId);
     const safeLanguageId = Number(languageId);
+    const allowedLanguageIds = await getAllowedLanguageIds(req);
+
+    if (allowedLanguageIds.length && !allowedLanguageIds.includes(safeLanguageId)) {
+      return res.status(403).json({ message: 'This language is not available for the current owner.' });
+    }
 
     const [translation] = await Translation.findOrCreate({
       where: {
@@ -71,6 +103,13 @@ exports.bulkUpsertTranslations = async (req, res) => {
       return res.status(400).json({ message: 'modelName, recordId, languageId, and translations array are required' });
     }
 
+    const safeLanguageId = Number(languageId);
+    const allowedLanguageIds = await getAllowedLanguageIds(req);
+
+    if (allowedLanguageIds.length && !allowedLanguageIds.includes(safeLanguageId)) {
+      return res.status(403).json({ message: 'This language is not available for the current owner.' });
+    }
+
     const createdItems = [];
     for (const item of translations) {
       const { field, value } = item;
@@ -81,14 +120,14 @@ exports.bulkUpsertTranslations = async (req, res) => {
           modelName: String(modelName),
           recordId: normalizeRecordId(recordId),
           field: String(field),
-          languageId: Number(languageId)
+          languageId: safeLanguageId
         },
         defaults: {
           value: value ?? null,
           modelName: String(modelName),
           recordId: normalizeRecordId(recordId),
           field: String(field),
-          languageId: Number(languageId)
+          languageId: safeLanguageId
         }
       });
 

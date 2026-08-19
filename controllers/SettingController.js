@@ -1,5 +1,5 @@
 const { Setting, MediaAsset, Translation, Language } = require('../models');
-const { getTranslationValue } = require('../utils/translations');
+const { getAllowedLanguageIds, getTranslationValue } = require('../utils/translations');
 
 exports.getAllSettings = async (req, res) => {
   try {
@@ -52,7 +52,7 @@ exports.getAllSettings = async (req, res) => {
     // Determine default language for this owner (tenant)
     let defaultLangCode = null;
     try {
-      const ownerId = req.owner && req.owner.id ? req.owner.id : null;
+      const ownerId = (req.owner && req.owner.id) || (req.user && req.user.ownerId) || null;
       let defLang = null;
       if (ownerId) {
         defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
@@ -68,8 +68,13 @@ exports.getAllSettings = async (req, res) => {
     if (requestedLang) {
       try {
         const keys = Object.keys(configMap).map(k => String(k));
+        const allowedLanguageIds = await getAllowedLanguageIds(req);
         const translations = await Translation.findAll({
-          where: { modelName: 'Setting', recordId: keys },
+          where: {
+            modelName: 'Setting',
+            recordId: keys,
+            languageId: allowedLanguageIds.length ? allowedLanguageIds : [-1]
+          },
           include: [{ model: Language, as: 'language' }]
         });
 
@@ -99,7 +104,15 @@ exports.getAllSettingsDetailed = async (req, res) => {
     });
     // Load translations for these settings to include in admin UI
     const keys = settings.map(s => String(s.key));
-    const translations = await Translation.findAll({ where: { modelName: 'Setting', recordId: keys }, include: [{ model: Language, as: 'language' }] });
+    const allowedLanguageIds = await getAllowedLanguageIds(req);
+    const translations = await Translation.findAll({
+      where: {
+        modelName: 'Setting',
+        recordId: keys,
+        languageId: allowedLanguageIds.length ? allowedLanguageIds : [-1]
+      },
+      include: [{ model: Language, as: 'language' }]
+    });
 
     const result = settings.map(s => {
       const t = translations.filter(tr => String(tr.recordId) === String(s.key)).map(tr => ({

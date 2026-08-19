@@ -1,4 +1,17 @@
+const { Op } = require('sequelize');
 const { Translation, Language } = require('../models');
+
+const getAllowedLanguageIds = async (req) => {
+  const ownerId = req?.owner?.id || req?.user?.ownerId || null;
+  const where = ownerId ? { [Op.or]: [{ ownerId }, { ownerId: null }] } : { ownerId: null };
+
+  const languages = await Language.findAll({
+    attributes: ['id'],
+    where
+  });
+
+  return languages.map(language => Number(language.id)).filter(Boolean);
+};
 
 const getTranslationValue = ({ translations = [], languageCode, defaultLanguageCode, field, fallback = '' }) => {
   if (!Array.isArray(translations) || !field) {
@@ -26,7 +39,7 @@ const resolveTranslationContext = async (req) => {
   let defaultLanguageCode = '';
 
   try {
-    const ownerId = req?.owner?.id || null;
+    const ownerId = req?.owner?.id || req?.user?.ownerId || null;
     let defLang = null;
     if (ownerId) {
       defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
@@ -66,8 +79,17 @@ const mergeTranslationsForRecords = async ({ req, records, modelName, fields = [
     return records;
   }
 
+  const allowedLanguageIds = await getAllowedLanguageIds(req);
+  if (!allowedLanguageIds.length) {
+    return records;
+  }
+
   const translations = await Translation.findAll({
-    where: { modelName, recordId: ids },
+    where: {
+      modelName,
+      recordId: ids,
+      languageId: allowedLanguageIds
+    },
     include: [{ model: Language, as: 'language' }]
   });
 
@@ -92,6 +114,7 @@ const mergeTranslationsForRecords = async ({ req, records, modelName, fields = [
 };
 
 module.exports = {
+  getAllowedLanguageIds,
   getTranslationValue,
   resolveTranslationContext,
   mergeTranslationsForRecords
