@@ -150,6 +150,8 @@
     "coach": {
       "title": "Votre coach assigné",
       "matching": "Recherche des leaders du réseau correspondant à votre profil...",
+      "assignedTitlePart1": "Votre coach",
+      "assignedTitlePart2": "assigné",
       "bookPrompt": "Remplissez vos coordonnées ci-dessous pour planifier votre consultation et contacter votre coach.",
       "agree": "J'accepte que NMA me mette en relation avec un coach actif et m'envoie des mises à jour de coaching.",
       "joinWhatsapp": "Rejoindre le groupe WhatsApp→"
@@ -162,6 +164,17 @@
       "habits": "Habitudes quotidiennes incohérentes",
       "presentation": "Dupliquer un système de présentation simple"
     }
+    ,
+    "segment": {
+      "new-to-nm": "Je suis nouveau en marketing de réseau",
+      "already-in-nm": "Je suis déjà dans le marketing de réseau",
+      "switch-companies": "Je suis dans le marketing de réseau mais je ne suis pas satisfait et je veux changer d'entreprise",
+      "exploring": "Je suis juste en train d'explorer des opportunités",
+      "income-diversification": "J'en ai assez de dépendre d'une seule source de revenus",
+      "jobless": "J'en ai marre d'être sans emploi",
+      "fast-track": "Je veux cette entreprise à tout prix"
+    },
+    "videoTitle": "Qu'est-ce que le marketing de réseau"
   },
   "solutions": {
     "recruiting": "Systèmes de génération de leads via les réseaux sociaux.",
@@ -183,6 +196,122 @@
       "overviewMessage": "Accédez directement à votre tableau de bord de formation personnalisé.",
       "thankYou": "Merci d'avoir consulté le modèle commercial",
       "thankYouMessage": "Votre parcours assigné est défini sur cet aperçu. Adressez toute question à votre coordinateur actif."
+    },
+    "yourCountry": "Votre pays",
+    "consult": {
+      "whatsappMessageTemplate": "Bonjour Coach, je consulte le {pkgName} ({price}) en {country}. Veuillez me guider sur le positionnement des emplacements binaires."
+    },
+    "products": {
+      "title": "Santé et bien-être de classe mondiale",
+      "displayTitle": "Présentation du produit",
+      "noVideo": "La présentation vidéo va ici"
+    },
+    "company": {
+      "partnerName": "Alliance In Motion Global Group of Companies",
+      "tagline": "ÉTABLI EN 2006 • PLUS DE 40 PAYS"
+    },
+    "founders": {
+      "title": "Fondateurs visionnaires"
+    },
+    "partners": {
+      "title": "Partenaires de fabrication mondiaux"
+    },
+    "testimonials": {
+      "title": "Autres histoires de succès",
+      "subtitle": "Des gens réels. Des résultats réels. À travers l'Afrique et au-delà.",
+      "intro": "Découvrez des histoires inspirantes d'ambassadeurs qui ont transformé leur vie en s'appuyant sur notre système simple, éprouvé et reproductible de construction d'entreprise. Voyez comment des personnes ordinaires obtiennent des résultats extraordinaires et créent un revenu durable grâce au pouvoir du marketing de réseau.",
+      "noVideo": "Aucune vidéo disponible",
+      "noFeatured": "Aucun témoignage vedette avec vidéo.",
+      "otherVideos": "Autres vidéos",
+      "noOtherVideos": "Aucune autre vidéo de témoignage."
+    },
+    "quadrant": {
+      "title": "Le quadrant de flux de trésorerie",
+      "leverageLabel": "Facteur de levier :",
+      "networkMarketingNote": "★ Marketing de réseau = quadrant B",
+      "E": {
+        "title": "E - Employé",
+        "titleShort": "Employé",
+        "subtitle": "Le temps contre l'argent",
+        "description": "Vous travaillez pour un patron et échangez des heures directement contre un salaire. Votre revenu dépend entièrement de votre présence. Si vous cessez de travailler, votre revenu actif s'arrête.",
+        "leverage": "Aucun levier. Votre revenu dépend à 100 % de votre temps personnel."
+      },
+      "S": {
+        "title": "S - Indépendant",
+        "titleShort": "Indépendant",
+        "subtitle": "Maîtrisez votre travail",
+        "description": "Vous possédez une petite entreprise ou une spécialisation (médecins, avocats, consultants). Si vous n'êtes pas performant, l'entreprise ferme.",
+        "leverage": "Levier individuel. Très actif, vous ne pouvez pas facilement vous absenter sans arrêter le cashflow."
+      },
+      "B": {
+        "title": "B - Propriétaire d'entreprise",
+        "titleShort": "Propriétaire d'entreprise",
+        "subtitle": "Systèmes de levier",
+        "description": "Vous construisez un système et menez un réseau de personnes. Le cashflow est généré par la duplication et le levier, et continue même en votre absence.",
+        "leverage": "Levier élevé. La duplication de réseaux en fait le système le moins risqué pour entrer dans le quadrant B."
+      },
+      "I": {
+        "title": "I - Investisseur",
+        "titleShort": "Investisseur",
+        "subtitle": "L'argent travaille pour vous",
+        "description": "Vous acquérez des actifs qui génèrent de l'argent (immobilier, dividendes). Vos investissements agissent comme levier.",
+        "leverage": "Levier de capital composé. L'argent travaille comme votre employé ultime."
+      },
+      "accessibility": {
+        "employee": "Sélectionner le quadrant Employé",
+        "businessOwner": "Sélectionner le quadrant Propriétaire d'entreprise",
+        "selfEmployed": "Sélectionner le quadrant Indépendant",
+        "investor": "Sélectionner le quadrant Investisseur"
+      }
+    },
+    "packages": {
+      "title": "Offres d'entrée pour ",
+      "subtitle": "Sélectionnez le niveau qui correspond à vos objectifs. Chaque package débloque un positionnement binaire et détermine votre niveau de récompense de parrainage.",
+      "popular": "Populaire",
+      "directBonus": "Bonus direct",
+      "matchBonus": "Bonus de mise en correspondance",
+      "orderNow": "Commander maintenant",
+      "details": "Détails",
+      "nonePrefix": "Aucune offre d'entrée pour",
+      "noneHint": "Changez de pays dans la barre supérieure ou contactez votre coordinateur."
+    },
+    "faqs": {
+      "title": "Réponses aux questions fréquentes",
+      "searchPlaceholder": "Rechercher des mots-clés…",
+      "ownerMentorCta": "Contacter le coach coordinateur",
+      "messageCoordinator": "Message au coordinateur (WhatsApp)",
+      "continueTraining": "Continuer la formation →"
+    },
+    "binary": {
+      "title": "Comprendre la structure binaire",
+      "intro": "Une <strong>structure binaire</strong> signifie que vous construisez seulement deux côtés : une <strong>équipe gauche</strong> et une <strong>équipe droite</strong>. Chaque fois que vous placez un parrainage de package à gauche et un autre à droite, ils se complètent pour générer un <strong>bonus de correspondance par paires (MSB)</strong>.",
+      "videoTitle": "Comment la structure binaire fonctionne vraiment",
+      "videoSubtitle": "Regardez cette courte vidéo pour comprendre comment la structure binaire fonctionne et comment les appariements génèrent des revenus.",
+      "watchVideo": "Regarder la vidéo",
+      "earningStreamsTitle": "Répartition des flux de revenus",
+      "earningStreamsHint": "Cliquez sur n'importe quel flux de revenus pour afficher des explications détaillées et des calculateurs dynamiques.",
+      "videoWalkthroughTitle": "Vidéo d'accompagnement disponible",
+      "videoWalkthroughSubtitle": "Ouvrez cette courte vidéo explicative pour voir le flux en action et comprendre la logique de paiement.",
+      "watchStreamVideo": "Regarder la vidéo du flux",
+      "hideDetails": "Masquer les détails",
+      "showDetails": "Afficher les détails",
+      "directReferralIncome": "Revenu de parrainage direct",
+      "selectReferralPackage": "Sélectionnez le niveau du package de parrainage :",
+      "totalDrbEarnings": "Revenus totaux DRB :",
+      "matchedSalesIncome": "Revenu des ventes correspondantes (appariement)",
+      "selectStructuralPackage": "Sélectionnez le niveau du package structurel :",
+      "totalMsbEarnings": "Revenus totaux MSB :",
+      "stairstepTitle": "Matrice des promotions de rang par échelons",
+      "stair": {
+        "silver": "Cadre Silver",
+        "silverPoints": "10 points requis (obtenez +10 % de remise)",
+        "gold": "Cadre Gold",
+        "goldPoints": "100 points requis (obtenez +20 % de remise)",
+        "global": "Ambassadeur mondial",
+        "globalPoints": "1 000 points requis (obtenez +30 % de remise)",
+        "note": "Les points s'accumulent via les commandes de groupe sans rétrogradation et sans limite de temps."
+      },
+      "defaultStreamDescription": "Ce flux de revenus multiplie votre revenu passif grâce à la duplication à long terme du réseau et aux réachats de l'équipe."
     }
   },
   "member": {

@@ -150,6 +150,8 @@
     "coach": {
       "title": "Your Assigned Coach",
       "matching": "Scanning network leaders matching your profile...",
+      "assignedTitlePart1": "Your Assigned",
+      "assignedTitlePart2": "Coach",
       "bookPrompt": "Fill in your details below to schedule your consultation and connect with your coach.",
       "agree": "I agree to let NMA match me with an active coach and send me coaching updates.",
       "joinWhatsapp": "Join WhatsApp  Group→"
@@ -162,6 +164,17 @@
       "habits": "Inconsistent daily habits",
       "presentation": "Duplicating a simple presentation system"
     }
+    ,
+    "segment": {
+      "new-to-nm": "I am new to network marketing",
+      "already-in-nm": "I am already in network marketing",
+      "switch-companies": "I am in network marketing but not satisfied and want to switch companies",
+      "exploring": "I am just exploring opportunities",
+      "income-diversification": "I am tired of depending on one source of income",
+      "jobless": "I am tired of being jobless",
+      "fast-track": "I want this business by all means"
+    },
+    "videoTitle": "What is Network Marketing"
   },
   "solutions": {
     "recruiting": "Social Media Lead Generation systems.",
@@ -183,6 +196,122 @@
       "overviewMessage": "Proceed directly to your personalized learning curriculum dashboard.",
       "thankYou": "Thank you for reviewing the business model",
       "thankYouMessage": "Your assigned journey is set to this slide-overview. Direct any questions to your active coordinator."
+    },
+    "yourCountry": "Your Country",
+    "consult": {
+      "whatsappMessageTemplate": "Hello Trainer, I am reviewing the {pkgName} ({price}) in {country}. Please guide me on binary slot positioning."
+    },
+    "products": {
+      "title": "World-Class Health & Wellness",
+      "displayTitle": "Product Presentation",
+      "noVideo": "Video presentation goes here"
+    },
+    "company": {
+      "partnerName": "Alliance In Motion Global Group of Companies",
+      "tagline": "ESTABLISHED SINCE 2006 • OVER 40+ COUNTRIES"
+    },
+    "founders": {
+      "title": "Visionary Founders"
+    },
+    "partners": {
+      "title": "Global Manufacturing Partners"
+    },
+    "testimonials": {
+      "title": "Other Success Stories",
+      "subtitle": "Real People. Real Results. Across Africa and Beyond.",
+      "intro": "Discover inspiring stories from ambassadors who have transformed their lives by leveraging our simple, proven, and duplicatable business-building system. See how ordinary people are achieving extraordinary results and creating lasting income through the power of network marketing.",
+      "noVideo": "No video available",
+      "noFeatured": "No featured testimonial with video.",
+      "otherVideos": "Other videos",
+      "noOtherVideos": "No other video testimonials."
+    },
+    "quadrant": {
+      "title": "The Cashflow Quadrant",
+      "leverageLabel": "Leverage Factor:",
+      "networkMarketingNote": "★ Network Marketing = B Quadrant",
+      "E": {
+        "title": "E - Employee",
+        "titleShort": "Employee",
+        "subtitle": "Time for Money",
+        "description": "You work for a boss and exchange hours directly for a paycheck. Your salary relies entirely on your attendance. If you stop working, your active income ceases.",
+        "leverage": "Zero leverage. Your income is 100% dependent on your personal hourly time exchange."
+      },
+      "S": {
+        "title": "S - Self-Employed",
+        "titleShort": "Self-Employed",
+        "subtitle": "Own Your Job",
+        "description": "You own a small business or specialization (doctors, lawyers, consultants). If you do not perform, the business closes.",
+        "leverage": "Individual leverage. Highly active, you cannot easily step away without stopping cashflow."
+      },
+      "B": {
+        "title": "B - Business Owner",
+        "titleShort": "Business Owner",
+        "subtitle": "Leverage Systems",
+        "description": "You build a system and lead a network of people. Cashflow is generated through duplication and leverage, continuing even in your absence.",
+        "leverage": "High leverage. Duplicating networks makes this the lowest risk system to step into the B quadrant."
+      },
+      "I": {
+        "title": "I - Investor",
+        "titleShort": "Investor",
+        "subtitle": "Money Works for You",
+        "description": "You acquire assets that generate money (real estate, dividends). Your investments act as leverage.",
+        "leverage": "Compound capital leverage. Money works as your ultimate employee."
+      },
+      "accessibility": {
+        "employee": "Select Employee Quadrant",
+        "businessOwner": "Select Business Owner Quadrant",
+        "selfEmployed": "Select Self-Employed Quadrant",
+        "investor": "Select Investor Quadrant"
+      }
+    },
+    "packages": {
+      "title": "Entry Packages for ",
+      "subtitle": "Select the tier that fits your goals. Each package unlocks binary positioning and sets your referral reward level.",
+      "popular": "Popular",
+      "directBonus": "Direct Bonus",
+      "matchBonus": "Match Bonus",
+      "orderNow": "Order now",
+      "details": "Details",
+      "nonePrefix": "No entry packages for",
+      "noneHint": "Switch country in the top bar or contact your coordinator."
+    },
+    "faqs": {
+      "title": "Answers to Common Questions",
+      "searchPlaceholder": "Search question keywords…",
+      "ownerMentorCta": "Contact Coordinator Coach",
+      "messageCoordinator": "Message Coordinator (WhatsApp)",
+      "continueTraining": "Continue to Training →"
+    },
+    "binary": {
+      "title": "Understanding the Binary Structure",
+      "intro": "A <strong>Binary Structure</strong> means you build only two sides: a <strong>Left Team</strong> and a <strong>Right Team</strong>. Every time you place a package referral on the Left and another on the Right, they pair to generate a <strong>Pairing Match Bonus (MSB)</strong>.",
+      "videoTitle": "How the Binary Structure Really Works",
+      "videoSubtitle": "Watch this short video to understand how the binary structure works and how pairings generate income.",
+      "watchVideo": "Watch Video",
+      "earningStreamsTitle": "Earning Streams Breakdown",
+      "earningStreamsHint": "Click on any earning stream to show detailed explanations and dynamic calculators.",
+      "videoWalkthroughTitle": "Video walkthrough available",
+      "videoWalkthroughSubtitle": "Open this short explainer video to see the stream in action and learn the payout logic.",
+      "watchStreamVideo": "Watch the stream video",
+      "hideDetails": "Hide Details",
+      "showDetails": "Show Details",
+      "directReferralIncome": "Direct Referral Income",
+      "selectReferralPackage": "Select referral package level:",
+      "totalDrbEarnings": "Total DRB Earnings:",
+      "matchedSalesIncome": "Matched Sales (Pairing) Income",
+      "selectStructuralPackage": "Select structural package level:",
+      "totalMsbEarnings": "Total MSB Earnings:",
+      "stairstepTitle": "Stairstep Rank Promotions Matrix",
+      "stair": {
+        "silver": "Silver Executive",
+        "silverPoints": "10 Points Required (Get +10% rebate)",
+        "gold": "Gold Executive",
+        "goldPoints": "100 Points Required (Get +20% rebate)",
+        "global": "Global Ambassador",
+        "globalPoints": "1,000 Points Required (Get +30% rebate)",
+        "note": "Points accumulate through group orders with no demotions and no time limit."
+      },
+      "defaultStreamDescription": "This earning stream multiplies your passive income through long-term network duplication and team-wide reorders."
     }
   },
   "member": {
