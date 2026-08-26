@@ -186,8 +186,8 @@
   },
   "presentation": {
     "welcomeBack": "Bon retour, leader. Passez en revue cette présentation commerciale et accédez à votre cursus de formation lorsque vous êtes prêt.",
-    "previous": "Diapositive précédente",
-    "next": "Diapositive suivante →",
+    "previous": "Précédent",
+    "next": "Suivant →",
     "done": "Terminé",
     "finish": {
       "readyTitle": "Prêt à commencer votre inscription à l'académie ?",
