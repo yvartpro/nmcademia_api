@@ -145,7 +145,11 @@
       "whyTrainingText": "L'excitation seule ne suffit pas. La réussite en duplication nécessite des systèmes modernes de génération de prospects, du mentorat haut de gamme et un leadership d'équipe.",
       "analyzeCta": "Analyser les défis →",
       "challengesPrompt": "Sélectionnez les défis que vous rencontrez actuellement dans votre organisation :",
-      "nextStep": "Étape suivante →"
+      "nextStep": "Étape suivante →",
+      "step2": { "title": "Qu'est-ce qui vous freine ?" },
+      "eliteTitle": "Vous méritez un coach d'élite",
+      "eliteDesc": "Voici comment le programme Elite Academia résout chaque défi que vous avez sélectionné.",
+      "matchWithMentor": "Mettez-moi en relation avec un mentor →"
     },
     "coach": {
       "title": "Votre coach assigné",

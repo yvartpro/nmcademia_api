@@ -145,7 +145,11 @@
       "whyTrainingText": "Excitement alone isn't enough. Success in duplication requires modern lead generation systems, high-ticket mentoring, and team leadership.",
       "analyzeCta": "Analyze Challenges →",
       "challengesPrompt": "Select the challenges you are currently facing in your organization:",
-      "nextStep": "Next Step →"
+      "nextStep": "Next Step →",
+      "step2": { "title": "What's Holding You Back?" },
+      "eliteTitle": "You Deserve an Elite Coach",
+      "eliteDesc": "Here is how the Elite Academia program solves each challenge you selected.",
+      "matchWithMentor": "Match Me With a Mentor →"
     },
     "coach": {
       "title": "Your Assigned Coach",
