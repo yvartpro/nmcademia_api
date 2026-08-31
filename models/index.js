@@ -17,6 +17,7 @@ db.ChatSession = require('./ChatSession')(sequelize, DataTypes);
 db.ChatMessage = require('./ChatMessage')(sequelize, DataTypes);
 db.Setting = require('./Setting')(sequelize, DataTypes);
 db.Language = require('./Language')(sequelize, DataTypes);
+db.OwnerLanguage = require('./OwnerLanguage')(sequelize, DataTypes);
 db.Translation = require('./Translation')(sequelize, DataTypes);
 
 // New content models
@@ -82,8 +83,19 @@ db.Owner.hasMany(db.ChatSession, { foreignKey: 'ownerId', as: 'chatSessions', on
 db.ChatSession.belongsTo(db.Owner, { foreignKey: 'ownerId' });
 
 // Languages and translations
-db.Owner.hasMany(db.Language, { foreignKey: 'ownerId', as: 'languages', onDelete: 'CASCADE' });
-db.Language.belongsTo(db.Owner, { foreignKey: 'ownerId', as: 'owner' });
+// Languages are shared globally. Per-owner control (active toggle + default) lives in OwnerLanguage.
+db.Owner.belongsToMany(db.Language, {
+  through: db.OwnerLanguage,
+  foreignKey: 'ownerId',
+  otherKey: 'languageId',
+  as: 'languages'
+});
+db.Language.belongsToMany(db.Owner, {
+  through: db.OwnerLanguage,
+  foreignKey: 'languageId',
+  otherKey: 'ownerId',
+  as: 'owners'
+});
 
 db.Language.hasMany(db.Translation, { foreignKey: 'languageId', as: 'translations', onDelete: 'CASCADE' });
 db.Translation.belongsTo(db.Language, { foreignKey: 'languageId', as: 'language' });

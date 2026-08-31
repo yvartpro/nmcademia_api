@@ -15,21 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING(80),
       allowNull: true
     },
-    isDefault: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false
-    },
-    isActive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
     sortOrder: {
       type: DataTypes.INTEGER,
       defaultValue: 0
-    },
-    ownerId: {
-      type: DataTypes.UUID,
-      allowNull: true
     }
   }, {
     tableName: 'nma_languages',
@@ -37,8 +25,8 @@ module.exports = (sequelize, DataTypes) => {
     indexes: [
       {
         unique: true,
-        fields: ['ownerId', 'code'],
-        name: 'owner_code_unique'
+        fields: ['code'],
+        name: 'code_unique'
       }
     ]
   });

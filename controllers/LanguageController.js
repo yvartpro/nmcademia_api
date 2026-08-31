@@ -1,13 +1,25 @@
-const { Language, Owner } = require('../models');
+const { Language, OwnerLanguage } = require('../models');
 const { Op } = require('sequelize');
+const {
+  resolveOwnerId,
+  getLanguagesForOwner,
+  upsertOwnerLanguage
+} = require('../utils/ownerLanguages');
+
+const clearOwnerDefault = async (ownerId, excludeLanguageId) => {
+  await OwnerLanguage.update({ isDefault: false }, {
+    where: {
+      ownerId,
+      isDefault: true,
+      languageId: { [Op.ne]: excludeLanguageId }
+    }
+  });
+};
 
 exports.getAllLanguages = async (req, res) => {
   try {
-    const languages = await Language.findAll({
-      include: [{ model: Owner, as: 'owner' }],
-      order: [['sortOrder', 'ASC'], ['name', 'ASC']]
-    });
-
+    const ownerId = resolveOwnerId(req);
+    const languages = await getLanguagesForOwner(ownerId);
     res.json(languages);
   } catch (error) {
     console.error('Get languages error:', error);
@@ -17,19 +29,8 @@ exports.getAllLanguages = async (req, res) => {
 
 exports.getPublicLanguages = async (req, res) => {
   try {
-    const ownerId = req.owner?.id ?? null;
-    const where = { isActive: true };
-
-    if (ownerId) {
-      where[Op.or] = [{ ownerId }, { ownerId: null }];
-    }
-
-    const languages = await Language.findAll({
-      where,
-      include: [{ model: Owner, as: 'owner' }],
-      order: [['sortOrder', 'ASC'], ['name', 'ASC']]
-    });
-
+    const ownerId = resolveOwnerId(req);
+    const languages = await getLanguagesForOwner(ownerId, { onlyActive: true });
     res.json(languages);
   } catch (error) {
     console.error('Get public languages error:', error);
@@ -49,37 +50,31 @@ exports.createLanguage = async (req, res) => {
     name = String(name).trim();
     nativeName = nativeName ? String(nativeName).trim() : null;
 
-    // Prevent duplicate codes for the same owner (or global)
-    const ownerId = req.user?.ownerId || null;
-    let existing = null;
-    try {
-      existing = await Language.findOne({ where: { code, ownerId } });
-    } catch (lookupErr) {
-      console.error('Language lookup failed:', lookupErr);
-      return res.status(500).json({ message: 'Failed to validate language uniqueness', error: lookupErr.message });
+    const existing = await Language.findOne({ where: { code } });
+    if (existing) {
+      return res.status(409).json({ message: 'Language code already exists', code });
     }
 
-    if (existing) {
-      return res.status(409).json({ message: 'Language code already exists for this owner', code });
-    }
+    const ownerId = resolveOwnerId(req);
 
     const language = await Language.create({
       code,
       name,
       nativeName,
-      isDefault: !!isDefault,
-      isActive: isActive !== false,
-      sortOrder: Number(sortOrder || 0),
-      ownerId
+      sortOrder: Number(sortOrder || 0)
     });
 
-    if (language.isDefault) {
-      await Language.update({ isDefault: false }, {
-        where: {
-          id: { [require('sequelize').Op.ne]: language.id },
-          ownerId
-        }
+    if (ownerId) {
+      await upsertOwnerLanguage({
+        ownerId,
+        languageId: language.id,
+        isActive: isActive !== false,
+        isDefault: !!isDefault
       });
+
+      if (isDefault) {
+        await clearOwnerDefault(ownerId, language.id);
+      }
     }
 
     res.status(201).json(language);
@@ -96,21 +91,36 @@ exports.updateLanguage = async (req, res) => {
       return res.status(404).json({ message: 'Language not found' });
     }
 
-    const payload = { ...req.body };
+    const { isActive, isDefault, ...shared } = req.body;
+    const payload = { ...shared };
     if (payload.code) payload.code = String(payload.code).trim().toLowerCase();
     if (payload.name) payload.name = String(payload.name).trim();
     if (payload.nativeName !== undefined) payload.nativeName = payload.nativeName ? String(payload.nativeName).trim() : null;
     if (payload.sortOrder !== undefined) payload.sortOrder = Number(payload.sortOrder || 0);
 
+    const ownerId = resolveOwnerId(req);
+
+    // Code uniqueness is global now
+    if (payload.code && payload.code !== language.code) {
+      const codeTaken = await Language.findOne({ where: { code: payload.code, id: { [Op.ne]: language.id } } });
+      if (codeTaken) {
+        return res.status(409).json({ message: 'Language code already exists', code: payload.code });
+      }
+    }
+
     await language.update(payload);
 
-    if (payload.isDefault) {
-      await Language.update({ isDefault: false }, {
-        where: {
-          id: { [require('sequelize').Op.ne]: language.id },
-          ownerId: language.ownerId || null
-        }
+    if (ownerId && (isActive !== undefined || isDefault !== undefined)) {
+      await upsertOwnerLanguage({
+        ownerId,
+        languageId: language.id,
+        isActive,
+        isDefault
       });
+
+      if (isDefault) {
+        await clearOwnerDefault(ownerId, language.id);
+      }
     }
 
     res.json(language);

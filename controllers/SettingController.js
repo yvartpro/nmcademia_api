@@ -1,5 +1,6 @@
 const { Setting, MediaAsset, Translation, Language } = require('../models');
 const { getAllowedLanguageIds, getTranslationValue } = require('../utils/translations');
+const { resolveOwnerId, getLanguagesForOwner } = require('../utils/ownerLanguages');
 
 exports.getAllSettings = async (req, res) => {
   try {
@@ -52,14 +53,9 @@ exports.getAllSettings = async (req, res) => {
     // Determine default language for this owner (tenant)
     let defaultLangCode = null;
     try {
-      const ownerId = (req.owner && req.owner.id) || (req.user && req.user.ownerId) || null;
-      let defLang = null;
-      if (ownerId) {
-        defLang = await Language.findOne({ where: { ownerId, isDefault: true } });
-      }
-      if (!defLang) {
-        defLang = await Language.findOne({ where: { isDefault: true } });
-      }
+      const ownerId = resolveOwnerId(req);
+      const active = await getLanguagesForOwner(ownerId, { onlyActive: true });
+      const defLang = active.find((language) => language.isDefault) || active[0];
       if (defLang) defaultLangCode = (defLang.code || '').toString().toLowerCase();
     } catch (e) {
       console.error('Failed to resolve default language for owner:', e);

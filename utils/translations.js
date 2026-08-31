@@ -1,16 +1,9 @@
-const { Op } = require('sequelize');
 const { Translation, Language } = require('../models');
+const { resolveOwnerId, getActiveLanguageIdsForOwner, getLanguagesForOwner } = require('./ownerLanguages');
 
 const getAllowedLanguageIds = async (req) => {
-  const ownerId = req?.owner?.id || req?.user?.ownerId || null;
-  const where = ownerId ? { [Op.or]: [{ ownerId }, { ownerId: null }] } : { ownerId: null };
-
-  const languages = await Language.findAll({
-    attributes: ['id'],
-    where
-  });
-
-  return languages.map(language => Number(language.id)).filter(Boolean);
+  const ownerId = resolveOwnerId(req);
+  return getActiveLanguageIdsForOwner(ownerId);
 };
 
 const getTranslationValue = ({ translations = [], languageCode, defaultLanguageCode, field, fallback = '' }) => {
@@ -46,23 +39,12 @@ const resolveTranslationContext = async (req) => {
   let defaultLanguageCode = '';
 
   try {
-    const ownerId = req?.owner?.id || req?.user?.ownerId || null;
-    let defLang = null;
-    if (ownerId) {
-      defLang = await Language.findOne({
-        where: { ownerId, isDefault: true },
-        order: [['sortOrder', 'ASC'], ['name', 'ASC']]
-      });
-    }
-    if (!defLang) {
-      defLang = await Language.findOne({
-        where: { isDefault: true },
-        order: [['sortOrder', 'ASC'], ['name', 'ASC']]
-      });
-    }
-    if (defLang) {
-      defaultLanguageCode = String(defLang.code || '').trim().toLowerCase();
-    }
+    const ownerId = resolveOwnerId(req);
+    const active = await getLanguagesForOwner(ownerId, { onlyActive: true });
+
+    const def = active.find((language) => language.isDefault);
+    if (def) defaultLanguageCode = String(def.code || '').trim().toLowerCase();
+    else if (active.length) defaultLanguageCode = String(active[0].code || '').trim().toLowerCase();
   } catch (error) {
     console.error('Failed to resolve default language for translations:', error);
   }

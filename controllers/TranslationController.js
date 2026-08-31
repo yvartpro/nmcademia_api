@@ -1,18 +1,11 @@
-const { Op } = require('sequelize');
 const { Translation, Language } = require('../models');
+const { resolveOwnerId, getActiveLanguageIdsForOwner } = require('../utils/ownerLanguages');
 
 const normalizeRecordId = (value) => String(value ?? '');
 
 const getAllowedLanguageIds = async (req) => {
-  const ownerId = req?.owner?.id || req?.user?.ownerId || null;
-  const where = ownerId ? { [Op.or]: [{ ownerId }, { ownerId: null }] } : { ownerId: null };
-
-  const languages = await Language.findAll({
-    attributes: ['id'],
-    where
-  });
-
-  return languages.map(language => Number(language.id)).filter(Boolean);
+  const ownerId = resolveOwnerId(req);
+  return getActiveLanguageIdsForOwner(ownerId);
 };
 
 exports.getTranslations = async (req, res) => {
