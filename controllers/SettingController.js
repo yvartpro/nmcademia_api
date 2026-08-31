@@ -63,7 +63,28 @@ exports.getAllSettings = async (req, res) => {
 
     if (requestedLang) {
       try {
-        const keys = Object.keys(configMap).map(k => String(k));
+        // landing_journeys is a JSON array of journey cards. Each card is
+        // translatable via its own Setting translation record keyed by
+        // "landing_journeys.<id>" with fields ['title','desc','ctaLabel'].
+        let journeyRecordIds = [];
+        const rawJourneys = configMap['landing_journeys'];
+        if (typeof rawJourneys === 'string') {
+          try {
+            const parsed = JSON.parse(rawJourneys);
+            if (Array.isArray(parsed)) {
+              journeyRecordIds = parsed
+                .map(j => j && j.id)
+                .filter(Boolean)
+                .map(id => `landing_journeys.${id}`);
+            }
+          } catch (e) { /* ignore malformed journeys */ }
+        }
+
+        const keys = [...new Set([
+          ...Object.keys(configMap).map(k => String(k)),
+          ...journeyRecordIds
+        ])];
+
         const allowedLanguageIds = await getAllowedLanguageIds(req);
         const translations = await Translation.findAll({
           where: {
@@ -74,12 +95,41 @@ exports.getAllSettings = async (req, res) => {
           include: [{ model: Language, as: 'language' }]
         });
 
-        // Merge translations per key
+        // Merge translations per key (base per-setting translations).
+        // Journey card keys ("landing_journeys.<id>") are translated per-card
+        // below and carry no base "value" translation, so skip them here.
         keys.forEach(key => {
+          if (journeyRecordIds.includes(String(key))) return;
           const forKey = translations.filter(t => String(t.recordId) === String(key));
           const translated = getTranslationValue({ translations: forKey, languageCode: requestedLang, defaultLanguageCode: defaultLangCode, field: 'value', fallback: configMap[key] });
           configMap[key] = translated;
         });
+
+        // Translate each journey card's title/desc/ctaLabel.
+        if (journeyRecordIds.length && typeof configMap['landing_journeys'] === 'string') {
+          try {
+            const cards = JSON.parse(configMap['landing_journeys']);
+            if (Array.isArray(cards)) {
+              const translatedCards = cards.map(card => {
+                if (!card || !card.id) return card;
+                const recordKey = `landing_journeys.${card.id}`;
+                const cardTranslations = translations.filter(t => String(t.recordId) === recordKey);
+                const next = { ...card };
+                ['title', 'desc', 'ctaLabel'].forEach(field => {
+                  next[field] = getTranslationValue({
+                    translations: cardTranslations,
+                    languageCode: requestedLang,
+                    defaultLanguageCode: defaultLangCode,
+                    field,
+                    fallback: next[field]
+                  });
+                });
+                return next;
+              });
+              configMap['landing_journeys'] = JSON.stringify(translatedCards);
+            }
+          } catch (e) { /* ignore malformed journeys */ }
+        }
       } catch (tErr) {
         console.error('Failed to merge setting translations:', tErr);
       }

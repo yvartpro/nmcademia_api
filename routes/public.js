@@ -12,7 +12,6 @@ const TestimonialController = require('../controllers/TestimonialController');
 const FounderController = require('../controllers/FounderController');
 const ManufacturingPartnerController = require('../controllers/ManufacturingPartnerController');
 const EarningStreamController = require('../controllers/EarningStreamController');
-const WayController = require('../controllers/WayController');
 const OwnerController = require('../controllers/OwnerController');
 const PresentationController = require('../controllers/PresentationController');
 const LanguageController = require('../controllers/LanguageController');
@@ -51,7 +50,6 @@ router.get('/testimonials', TestimonialController.getAllTestimonials);
 router.get('/founders', FounderController.getAllFounders);
 router.get('/manufacturing-partners', ManufacturingPartnerController.getAllManufacturingPartners);
 router.get('/earning-streams', EarningStreamController.getAllEarningStreams);
-router.get('/ways', WayController.getAllWays);
 
 // Presentations
 router.get('/presentations/:countryCode', PresentationController.getPresentationByCountry);

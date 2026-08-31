@@ -57,17 +57,85 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script type="module" crossorigin src="/assets/index-BhDrpnRs.js"></script>
+
+    <!-- Splash screen (shown while the app boots). Defined inline so it styles
+         before the JS bundle loads. -->
+    <style>
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background:
+          radial-gradient(60% 60% at 50% 20%, rgba(212, 175, 55, 0.12), transparent 60%),
+          linear-gradient(160deg, #0b0f0d 0%, #121917 55%, #0b0f0d 100%);
+        color: #f4f6f5;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      }
+      .app-splash-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+      }
+      .app-splash-logo {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 800;
+        font-size: 32px;
+        letter-spacing: 0.18em;
+        color: #ffffff;
+      }
+      .app-splash-logo::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: 3px;
+        margin-top: 8px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, rgba(212, 175, 55, 0), #d4af37, rgba(212, 175, 55, 0));
+      }
+      .app-splash-spinner {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.15);
+        border-top-color: #d4af37;
+        animation: app-splash-spin 0.9s linear infinite;
+      }
+      .app-splash-inner p {
+        margin: 0;
+        font-size: 12px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      @keyframes app-splash-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+    <script type="module" crossorigin src="/assets/index-DFKDs5MF.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-lhHHWwHU.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-socket-DkHRF3d4.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-ui-C8bT7jQI.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-vue-C11pjyuA.js">
     <link rel="modulepreload" crossorigin href="/assets/vendor-axios-CN6Tf-y4.js">
     <link rel="modulepreload" crossorigin href="/assets/api-X7BbBFr-.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-D9AAn2hv.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-Ci07R9uv.css">
   </head>
 
   <body>
-    <div id="app"></div>
+    <div id="app">
+      <!-- Static splash shown while the app boots (language + translations load).
+           It is replaced by the Vue app as soon as the app mounts. -->
+      <div id="app-splash" class="app-splash">
+        <div class="app-splash-inner">
+          <div class="app-splash-logo" aria-hidden="true">NMA</div>
+          <div class="app-splash-spinner" aria-hidden="true"></div>
+          <p>Loading</p>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
