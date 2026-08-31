@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon index.js",
     "seed": "node seed.js",
-    "sync": "node sync-db.js"
+    "db:create": "sequelize-cli db:create",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:migrate:status": "sequelize-cli db:migrate:status",
+    "db:baseline": "node scripts/baseline.js"
   },
   "type": "commonjs",
   "dependencies": {

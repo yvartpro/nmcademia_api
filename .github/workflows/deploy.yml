@@ -32,4 +32,7 @@ jobs:
 
             npm install
 
+            # Apply database migrations (non-destructive, preserves existing data)
+            npm run db:migrate
+
             pm2 restart nma
