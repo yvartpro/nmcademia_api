@@ -50,7 +50,7 @@ exports.getPackageById = async (req, res) => {
 
 exports.createPackage = async (req, res) => {
   try {
-    const { name, slug, description, featured, mediaAssetId, prices } = req.body;
+    const { name, slug, description, featured, heads, mediaAssetId, prices } = req.body;
     if (!name || !slug) {
       return res.status(400).json({ message: 'Name and slug are required' });
     }
@@ -60,6 +60,7 @@ exports.createPackage = async (req, res) => {
       slug,
       description,
       featured,
+      heads,
       mediaAssetId
     });
 
@@ -92,7 +93,7 @@ exports.createPackage = async (req, res) => {
 
 exports.updatePackage = async (req, res) => {
   try {
-    const { name, slug, description, featured, mediaAssetId, prices } = req.body;
+    const { name, slug, description, featured, heads, mediaAssetId, prices } = req.body;
     const pkg = await Package.findByPk(req.params.id);
     if (!pkg) return res.status(404).json({ message: 'Package not found' });
 
@@ -101,6 +102,7 @@ exports.updatePackage = async (req, res) => {
       slug,
       description,
       featured,
+      heads,
       mediaAssetId
     });
 
