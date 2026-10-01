@@ -53,14 +53,15 @@ exports.adminGetAllCountries = async (req, res) => {
 
 exports.createCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
-    if (!name || !code || !currency || !currencySymbol) {
-      return res.status(400).json({ message: 'Name, code, currency and currency symbol are required' });
+    const { name, code, phoneCode, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
+    if (!name || !code || !phoneCode || !currency || !currencySymbol) {
+      return res.status(400).json({ message: 'Name, code, phone code, currency and currency symbol are required' });
     }
 
     const country = await Country.create({
       name,
       code: code.toUpperCase(),
+      phoneCode: phoneCode.trim(),
       currency,
       currencySymbol,
       whatsappNumber,
@@ -78,13 +79,14 @@ exports.createCountry = async (req, res) => {
 
 exports.updateCountry = async (req, res) => {
   try {
-    const { name, code, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
+    const { name, code, phoneCode, currency, currencySymbol, whatsappNumber, flagIcon, status, hasOffice } = req.body;
     const country = await Country.findByPk(req.params.id);
     if (!country) return res.status(404).json({ message: 'Country not found' });
 
     await country.update({
       name,
       code: code ? code.toUpperCase() : country.code,
+      phoneCode: phoneCode !== undefined ? phoneCode.trim() : country.phoneCode,
       currency,
       currencySymbol,
       whatsappNumber,

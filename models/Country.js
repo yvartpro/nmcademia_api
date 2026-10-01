@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
+    phoneCode: {
+      type: DataTypes.STRING(16),
+      allowNull: false,
+      defaultValue: ''
+    },
     currency: {
       type: DataTypes.STRING(10),
       allowNull: false
