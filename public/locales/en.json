@@ -124,7 +124,7 @@
       "labels": {
         "fullName": "Full Name",
         "email": "Email Address",
-        "phone": "Phone Number (Optional)"
+        "phone": "Phone Number"
       },
       "placeholders": {
         "fullName": "John Doe",

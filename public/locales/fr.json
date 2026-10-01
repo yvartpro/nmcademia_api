@@ -124,7 +124,7 @@
       "labels": {
         "fullName": "Nom complet",
         "email": "Adresse e-mail",
-        "phone": "Numéro de téléphone (optionnel)"
+        "phone": "Numéro de téléphone"
       },
       "placeholders": {
         "fullName": "Jean Dupont",
