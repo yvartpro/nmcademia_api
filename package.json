@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "nodemon index.js",
     "seed": "node seed.js",
+    "seed:countries": "node scripts/seed-countries.js",
     "db:create": "sequelize-cli db:create",
     "db:migrate": "sequelize-cli db:migrate",
     "db:migrate:undo": "sequelize-cli db:migrate:undo",
