@@ -4,6 +4,7 @@ const { MediaAsset } = require('../models');
 const { uploadRoot } = require('../middleware/upload');
 const { toWebPath, toPublicUrl } = require('../utils/paths');
 const { enqueue: enqueueTranscode, getStatus: getQueueStatus } = require('../services/videoQueue');
+const ImageKit = require('@imagekit/nodejs').default;
 
 const diskPathFromRelative = (relativePath) => {
   if (!relativePath) return null;
@@ -24,7 +25,7 @@ const normalizeStoredPath = (relativePath) => {
 const withPublicUrls = (asset, req) => {
   const data = asset.toJSON ? asset.toJSON() : { ...asset };
   const basePath = process.env.PUBLIC_BASE_PATH || '';
-  const rawPath = normalizeStoredPath(data.filePath);
+  const rawPath = data.imageKitStreamUrl || normalizeStoredPath(data.filePath);
   data.filePath = toWebPath(rawPath, basePath);
 
   let originOverride = null;
@@ -35,11 +36,102 @@ const withPublicUrls = (asset, req) => {
   }
 
   data.publicUrl = toPublicUrl(rawPath, basePath, originOverride);
-  data.thumbnailPath = data.thumbnailPath
-    ? toWebPath(normalizeStoredPath(data.thumbnailPath), basePath)
+  const thumbnailPath = data.imageKitThumbnailUrl || data.thumbnailPath;
+  data.thumbnailPath = thumbnailPath
+    ? toWebPath(data.imageKitThumbnailUrl || normalizeStoredPath(thumbnailPath), basePath)
     : null;
   data.versions = data.versions || null;
   return data;
+};
+
+const getImageKitClient = () => {
+  if (!process.env.IMAGEKIT_PRIVATE_KEY) throw new Error('ImageKit is not configured');
+  return new ImageKit({ privateKey: process.env.IMAGEKIT_PRIVATE_KEY });
+};
+
+const buildImageKitStreamUrl = (sourceUrl) => {
+  const streamUrl = new URL(sourceUrl);
+  streamUrl.pathname = `${streamUrl.pathname.replace(/\/+$/, '')}/ik-master.m3u8`;
+  streamUrl.searchParams.set('tr', 'sr-240_360_480_720_1080');
+  return streamUrl.toString();
+};
+
+const buildImageKitThumbnailUrl = (sourceUrl) => {
+  const thumbnailUrl = new URL(sourceUrl);
+  thumbnailUrl.pathname = `${thumbnailUrl.pathname.replace(/\/+$/, '')}/ik-thumbnail.jpg`;
+  return thumbnailUrl.toString();
+};
+
+exports.getImageKitAuth = async (_req, res) => {
+  try {
+    if (!process.env.IMAGEKIT_PUBLIC_KEY) {
+      return res.status(503).json({ error: 'ImageKit is not configured' });
+    }
+    const imagekit = getImageKitClient();
+    return res.json({
+      ...imagekit.helper.getAuthenticationParameters(),
+      publicKey: process.env.IMAGEKIT_PUBLIC_KEY
+    });
+  } catch (error) {
+    return res.status(503).json({ error: error.message });
+  }
+};
+
+exports.createImageKitVideo = async (req, res) => {
+  try {
+    const { imageKitUrl, imageKitFileId, imageKitThumbnailUrl, imageKitThumbnailFileId } = req.body;
+    if (!imageKitUrl || !imageKitFileId) {
+      return res.status(400).json({ error: 'ImageKit video URL and file ID are required' });
+    }
+
+    const streamUrl = buildImageKitStreamUrl(imageKitUrl);
+    const thumbnailUrl = imageKitThumbnailUrl || buildImageKitThumbnailUrl(imageKitUrl);
+    const asset = await MediaAsset.create({
+      type: 'video',
+      title: req.body.title || 'Video',
+      description: req.body.description,
+      excerpt: req.body.excerpt,
+      filePath: streamUrl,
+      thumbnailPath: thumbnailUrl,
+      imageKitUrl,
+      imageKitFileId,
+      imageKitStreamUrl: streamUrl,
+      imageKitThumbnailUrl: thumbnailUrl,
+      imageKitThumbnailFileId: imageKitThumbnailFileId || null,
+      mimeType: req.body.mimeType || 'video/mp4',
+      fileSize: Number(req.body.fileSize) || null,
+      versions: { hls: { masterUrl: streamUrl, provider: 'imagekit' } },
+      processingStatus: 'ready'
+    });
+
+    return res.status(201).json(withPublicUrls(asset, req));
+  } catch (error) {
+    console.error('Error creating ImageKit video asset:', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+exports.updateImageKitThumbnail = async (req, res) => {
+  try {
+    const asset = await MediaAsset.findByPk(req.params.id);
+    if (!asset) return res.status(404).json({ error: 'Media not found' });
+    if (asset.type !== 'video') {
+      return res.status(400).json({ error: 'Thumbnail can only be updated on video assets' });
+    }
+    if (!req.body.imageKitThumbnailUrl) {
+      return res.status(400).json({ error: 'ImageKit thumbnail URL is required' });
+    }
+
+    await asset.update({
+      thumbnailPath: req.body.imageKitThumbnailUrl,
+      imageKitThumbnailUrl: req.body.imageKitThumbnailUrl,
+      imageKitThumbnailFileId: req.body.imageKitThumbnailFileId || null
+    });
+    return res.json(withPublicUrls(asset, req));
+  } catch (error) {
+    console.error('Error updating ImageKit thumbnail:', error);
+    return res.status(500).json({ error: error.message });
+  }
 };
 
 exports.uploadImage = async (req, res) => {

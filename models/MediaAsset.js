@@ -11,10 +11,15 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     excerpt: DataTypes.TEXT,
     filePath: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: false
     },
-    thumbnailPath: DataTypes.STRING,
+    thumbnailPath: DataTypes.TEXT,
+    imageKitUrl: DataTypes.TEXT,
+    imageKitFileId: DataTypes.STRING,
+    imageKitStreamUrl: DataTypes.TEXT,
+    imageKitThumbnailUrl: DataTypes.TEXT,
+    imageKitThumbnailFileId: DataTypes.STRING,
     mimeType: DataTypes.STRING,
     fileSize: DataTypes.INTEGER,
     width: DataTypes.INTEGER,
